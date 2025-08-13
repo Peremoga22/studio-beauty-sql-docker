@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+
 using webStudio.Components;
 using webStudio.Components.Account;
 using webStudio.Data;
@@ -34,7 +36,15 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
     .AddDefaultTokenProviders();
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(8080); // HTTP
+    options.ListenAnyIP(8081, o => o.UseHttps()); // HTTPS
+});
 
+builder.Services.AddDataProtection()   // add save keys
+    .PersistKeysToFileSystem(new DirectoryInfo("/keys"))
+    .SetApplicationName("webStudio");
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
