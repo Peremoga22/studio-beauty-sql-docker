@@ -1,0 +1,50 @@
+﻿@page "/appointment-confirm"
+
+<h3 style="padding-top: 5%;"></h3>
+<div class="container py-4">
+    <div class="section-title mb-5 text-center">
+        <div class="sub-style">
+            <h4 class="sub-title px-3 mb-0">Підтвердження</h4>
+        </div>
+        <h1 class="display-5 mb-3">Перевірте деталі запису</h1>
+        <p>Якщо все вірно — натисніть «Підтвердити».</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow rounded">
+                <div class="card-body p-4">
+                    <dl class="row mb-0">
+                        <dt class="col-5">Ім’я</dt>
+                        <dd class="col-7"><span class="js-name">Олена Максимів</span></dd>
+
+                        <dt class="col-5">Телефон</dt>
+                        <dd class="col-7"><span class="js-phone">+380930901111</span></dd>
+
+                        <dt class="col-5">Послуга</dt>
+                        <dd class="col-7"><span class="js-service">Масаж обличчя</span></dd>
+
+                        <dt class="col-5">Дата</dt>
+                        <dd class="col-7"><span class="js-date">12.08.2025</span></dd>
+
+                        <dt class="col-5">Час</dt>
+                        <dd class="col-7"><span class="js-time">11:30</span></dd>
+                    </dl>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-between mt-4">
+                        <a href="/appointment" class="btn btn-outline-primary rounded-pill w-100 w-md-auto">
+                            Редагувати
+                        </a>
+
+                        <a href="/appointment-success"
+                           class="btn rounded-pill px-4 w-100 w-md-auto"
+                           style="background-color:#f8b7d8; color:white; border:none;">
+                            Підтвердити запис
+                        </a>
+                    </div>
+                                       
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
