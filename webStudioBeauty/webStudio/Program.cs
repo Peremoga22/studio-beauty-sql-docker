@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
+using System;
+
 using webStudio.Components;
 using webStudio.Components.Account;
 using webStudio.Data;
@@ -47,6 +49,11 @@ builder.Services.AddDataProtection()   // add save keys
     .SetApplicationName("webStudio");
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate(); // add update database automation
+}
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
