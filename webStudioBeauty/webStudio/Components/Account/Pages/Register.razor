@@ -15,6 +15,7 @@
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
 @inject RoleManager<IdentityRole> RoleManager
+@inject IConfiguration Configuration
 
 <PageTitle>Register</PageTitle>
 
@@ -65,7 +66,12 @@
     private string? ReturnUrl { get; set; }
 
     private string? Message => identityErrors is null ? null : $"Error: {string.Join(", ", identityErrors.Select(error => error.Description))}";
-    private readonly string adminEmail;
+    private string? adminEmail;
+
+    protected override void OnInitialized()
+    {
+        adminEmail = Configuration.GetValue<string>("Admin:Login");
+    }
 
     public async Task RegisterUser(EditContext editContext)
     {
