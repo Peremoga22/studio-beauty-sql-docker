@@ -1,4 +1,6 @@
-﻿<!-- Topbar Start -->
+﻿@inject NavigationManager NavigationManager
+
+<!-- Topbar Start -->
 <div class="container-fluid bg-dark px-5 d-none d-lg-block">
     <div class="row gx-0 align-items-center text-white small" style="height: 45px;">
         <div class="col-lg-8 text-start">
@@ -70,6 +72,23 @@
                     <NavLink href="/event-list" class="nav-link" activeClass="active">
                         Події
                     </NavLink>
+                </li>
+                <li class="nav-item">
+                     <AuthorizeView>
+                          <Authorized>
+                            <NavLink class="nav-link" href="Account/Manage">
+                                <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> @context.User.Identity?.Name
+                            </NavLink>
+                            <NavLink class="nav-link" href="Account/Logout">
+                                <span class="bi bi-box-arrow-right" aria-hidden="true"></span> Logout
+                             </NavLink>
+                          </Authorized>
+                         <NotAuthorized>
+                           <NavLink class="nav-link" href="Account/Login">
+                                <span class="bi bi-person-badge-nav-menu" aria-hidden="true"></span> Login
+                            </NavLink>
+                        </NotAuthorized>
+                    </AuthorizeView>
                 </li>
             </ul>
 
