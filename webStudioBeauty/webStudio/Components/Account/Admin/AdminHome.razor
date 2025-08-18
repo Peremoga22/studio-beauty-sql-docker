@@ -1,0 +1,11 @@
+﻿@page "/admin-home"
+@using Microsoft.AspNetCore.Authorization
+
+@attribute [Authorize(Roles = "Admin")]
+
+<h3 style="padding-top: 7%;"></h3>
+<h3>AdminHome</h3>
+
+@code {
+
+}
