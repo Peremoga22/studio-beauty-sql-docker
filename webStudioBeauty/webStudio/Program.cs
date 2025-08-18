@@ -38,17 +38,18 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
     .AddDefaultTokenProviders();
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+// when deploy don't for get coments
 builder.WebHost.ConfigureKestrel(options =>
 {
     options.ListenAnyIP(8080); // HTTP
     options.ListenAnyIP(8081, o => o.UseHttps()); // HTTPS
 });
-
+// when deploy don't for get coments
 builder.Services.AddDataProtection()   // add save keys
     .PersistKeysToFileSystem(new DirectoryInfo("/keys"))
     .SetApplicationName("webStudio");
 var app = builder.Build();
-
+// when deploy don't for get coments
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
