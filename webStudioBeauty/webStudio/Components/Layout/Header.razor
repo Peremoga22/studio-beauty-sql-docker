@@ -76,20 +76,24 @@
                 </li>
                 <li class="nav-item">
                      <AuthorizeView>
-                          <Authorized>
+                          <Authorized>                           
                             <NavLink class="nav-link" href="Account/Manage">
-                                <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> @context.User.Identity?.Name
-                            </NavLink>
-                             <li class="nav-item">
+                                 <li class="nav-item">
+                                @* <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> @context.User.Identity?.Name *@
+                                <a href="/admin-home" class="nav-link" aria-haspopup="true" aria-expanded="false">AdminPanel</a>
+                                </li>
+                            </NavLink>                                                              
+                                <li class="nav-item">
                                    <form action="Account/Logout" method="post">
-                                    <AntiforgeryToken />
-                                    <input type="hidden" name="ReturnUrl" value="@currentUrl" />
-                                    <button type="submit" class="nav-link">
-                                        <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Вийти
-                                    </button>
-                                 </form>
-                             </li>
-                          </Authorized>
+                                     <AntiforgeryToken />
+                                     <input type="hidden" name="ReturnUrl" value="@currentUrl" />
+                                       <button type="submit" class="nav-link">
+                                          <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Вийти
+                                       </button>
+                                   </form>
+                                </li>                                                             
+                                                               
+                             </Authorized>
                          <NotAuthorized>
                            <NavLink class="nav-link" href="Account/Login">
                                 <span class="bi bi-person-badge-nav-menu" aria-hidden="true"></span> Логін
@@ -104,10 +108,11 @@
 </div>
 
 @code {
+
     private string? currentUrl;
 
-    protected override void OnInitialized()
-    {
+    protected override async Task OnInitializedAsync()
+    {      
         currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
         NavigationManager.LocationChanged += OnLocationChanged;
     }
