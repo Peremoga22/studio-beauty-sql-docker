@@ -1,6 +1,6 @@
 ﻿@implements IDisposable
+@using Microsoft.AspNetCore.Components.Routing
 @inject NavigationManager NavigationManager
-
 
 <div class="container-fluid position-relative p-0">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm px-4 px-lg-5 py-3">
@@ -9,11 +9,13 @@
             <img src="img/logo-new.png" alt="Логотип" class="rounded-circle shadow-sm" style="height: 48px; width: 48px; object-fit: cover;">
             <span class="fs-4 fw-bold text-light">Адмінка</span>
         </a>
+
         <!-- Mobile Toggle -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
                 aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
+
         <!-- Navigation -->
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav ms-auto gap-2">
@@ -42,46 +44,45 @@
                         Події наповнення
                     </NavLink>
                 </li>
-                <li class="nav-item">
-                    <AuthorizeView>
-                        <Authorized>
-                            <NavLink class="nav-link text-warning fw-bold" href="Account/Manage">
-                                <li class="nav-item">
-                                    <a href="/admin-home" class="nav-link text-warning fw-bold" aria-haspopup="true" aria-expanded="false">Адмінка</a>
-                                </li>
+
+                <AuthorizeView>
+                    <Authorized>
+                        <li class="nav-item">
+                            <NavLink class="nav-link text-warning fw-bold" href="/admin-home">
+                                Адмінка
                             </NavLink>
-                            <li class="nav-item">
-                                <form action="Account/Logout" method="post">
-                                    <AntiforgeryToken />
-                                    <input type="hidden" name="ReturnUrl" value="@currentUrl" />
-                                    <button type="submit" class="nav-link text-danger fw-bold">
-                                        <span class="bi bi-box-arrow-left" aria-hidden="true"></span> Вийти
-                                    </button>
-                                </form>
-                            </li>
-                        </Authorized>
-                    </AuthorizeView>
-                </li>
+                        </li>                  
+                        <li class="nav-item">
+                            <form action="Account/Logout" method="post">
+                                <AntiforgeryToken />
+                                <input type="hidden" name="ReturnUrl" value="@currentUrl" />
+                                <button type="submit" class="nav-link text-danger">
+                                    <span class="bi bi-box-arrow-left" aria-hidden="true"></span> Вийти
+                                </button>
+                            </form>
+                        </li>
+                    </Authorized>                   
+                </AuthorizeView>
             </ul>
         </div>
     </nav>
 </div>
 
 @code {
-
     private string? currentUrl;
 
-    protected override async Task OnInitializedAsync()
+    protected override Task OnInitializedAsync()
     {
         currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
         NavigationManager.LocationChanged += OnLocationChanged;
+        return Task.CompletedTask;
     }
 
     private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
     {
         currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
         StateHasChanged();
-    }
+    }     
 
     public void Dispose()
     {
