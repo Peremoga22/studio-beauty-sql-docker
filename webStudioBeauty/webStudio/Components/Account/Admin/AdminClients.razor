@@ -1,0 +1,99 @@
+﻿@page "/admin-clients"
+@using Microsoft.AspNetCore.Authorization
+@using webStudio.Components.Layout
+@layout AdminLayout
+@attribute [Authorize(Roles = "Admin")]
+
+<h3 style="padding-top: 2%;"></h3>
+<div class="container mt-4">
+    <h3 style="color:hotpink">Записи клієнтів</h3>
+</div>
+
+<main class="container">
+    <section class="card card--elevated">
+        <header class="card__header">
+            <div>
+                <h1 class="title">Календар записів</h1>
+                <p class="subtitle">Оберіть день і перегляньте всі записи за послугами</p>
+            </div>
+            <div class="controls">
+                <label class="control">
+                    <span class="control__label">Дата</span>
+                    <input class="control__input" type="date" value="2025-08-19" />
+                </label>
+            </div>
+        </header>
+
+        <div class="divider"></div>
+
+        <section aria-label="Список записів" class="cards">
+            <article class="entry">
+                <div class="entry__row">
+                    <span class="badge badge--massage">Масаж</span>
+                    <span class="time">09:00 – 10:00</span>
+                </div>
+                <div class="client">Іван П.</div>
+                <div class="procedure">Масаж спини</div>
+                <div class="meta">
+                    <span class="duration">Тривалість: 60 хв</span>
+                    <span class="price">600 грн</span>
+                </div>
+            </article>
+
+            <article class="entry">
+                <div class="entry__row">
+                    <span class="badge badge--cosmo">Косметологія</span>
+                    <span class="time">09:30 – 10:30</span>
+                </div>
+                <div class="client">Оксана С.</div>
+                <div class="procedure">Чистка обличчя</div>
+                <div class="meta">
+                    <span class="duration">Тривалість: 60 хв</span>
+                    <span class="price">800 грн</span>
+                </div>
+            </article>
+
+            <article class="entry">
+                <div class="entry__row">
+                    <span class="badge badge--cosmo">Косметологія</span>
+                    <span class="time">11:00 – 12:30</span>
+                </div>
+                <div class="client">Катерина Л.</div>
+                <div class="procedure">Пілінг</div>
+                <div class="meta">
+                    <span class="duration">90 хв</span>
+                    <span class="price">1200 грн</span>
+                </div>
+            </article>
+
+            <article class="entry">
+                <div class="entry__row">
+                    <span class="badge badge--massage">Масаж</span>
+                    <span class="time">13:00 – 14:00</span>
+                </div>
+                <div class="client">Василь С.</div>
+                <div class="procedure">Антистрес масаж</div>
+                <div class="meta">
+                    <span class="duration">60 хв</span>
+                    <span class="price">700 грн</span>
+                </div>
+            </article>
+
+            <article class="entry">
+                <div class="entry__row">
+                    <span class="badge badge--cosmo">Косметологія</span>
+                    <span class="time">15:00 – 15:45</span>
+                </div>
+                <div class="client">Наталія Р.</div>
+                <div class="procedure">Догляд за шкірою</div>
+                <div class="meta">
+                    <span class="duration">45 хв</span>
+                    <span class="price">650 грн</span>
+                </div>
+            </article>
+        </section>
+    </section>
+</main>
+@code {}
+
+
