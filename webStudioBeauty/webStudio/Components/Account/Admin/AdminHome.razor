@@ -1,9 +1,10 @@
 ﻿@page "/admin-home"
 @using Microsoft.AspNetCore.Authorization
-
+@using webStudio.Components.Layout
+@layout AdminLayout
 @attribute [Authorize(Roles = "Admin")]
 
-<h3 style="padding-top: 7%;"></h3>
+<h3 style="padding-top: 2%;"></h3>
 <div class="container mt-4">
     <h3 style="color:hotpink">Записи клієнтів</h3>
 </div>
