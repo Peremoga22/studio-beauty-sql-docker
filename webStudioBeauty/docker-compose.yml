@@ -1,5 +1,7 @@
+version: '3.9'
+
 services:
-   sqlserver:
+  sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
       SA_PASSWORD: "Ab@12345"
@@ -9,19 +11,36 @@ services:
     networks:
       - appnet
 
-   webstudio:
+  webstudio:
     image: ${DOCKER_REGISTRY-}webstudio
     build:
       context: .
       dockerfile: webStudio/Dockerfile
     ports:
-      - "8080:8080"
-      - "8081:8081"
+      - "80:8080"
+      - "443:8081"
     volumes:
-      - ./keys:/keys
+      - ${USERPROFILE}\.aspnet\https:/root/.aspnet/https:ro
+    environment:
+      ASPNETCORE_Kestrel__Certificates__Default__Path: /root/.aspnet/https/aspnetapp.pfx
+      ASPNETCORE_Kestrel__Certificates__Default__Password: Pass123!
+       - ./keys:/keys
+    depends_on:
+      - sqlserver
+      - migrate
     networks:
       - appnet
     
-
+  migrate:
+    build:
+      context: .
+      dockerfile: webStudio/Dockerfile
+    command: >
+      sh -c "dotnet ef database update --project webStudio --startup-project webStudio"
+    depends_on:
+      - sqlserver
+    networks:
+      - appnet
+  
 networks:
   appnet:

@@ -41,20 +41,15 @@ builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSe
 // when deploy don't for get coments
 builder.WebHost.ConfigureKestrel(options =>
 {
-    options.ListenAnyIP(8080); // HTTP
-    options.ListenAnyIP(8081, o => o.UseHttps()); // HTTPS
+    options.ListenAnyIP(80); // HTTP
+    options.ListenAnyIP(443, o => o.UseHttps()); // HTTPS
 });
 // when deploy don't for get coments
 builder.Services.AddDataProtection()   // add save keys
     .PersistKeysToFileSystem(new DirectoryInfo("/keys"))
     .SetApplicationName("webStudio");
 var app = builder.Build();
-// when deploy don't for get coments
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    db.Database.Migrate(); // add update database automation
-}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
