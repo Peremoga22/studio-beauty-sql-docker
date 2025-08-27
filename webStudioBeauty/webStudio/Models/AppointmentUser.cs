@@ -4,7 +4,7 @@ namespace webStudio.Models
 {
     public class AppointmentUser
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
         public string FullName { get; set; }
         public string Phone { get; set; }
         public DateOnly Date { get; set; }
