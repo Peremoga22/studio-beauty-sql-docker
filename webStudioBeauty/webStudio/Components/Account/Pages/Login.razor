@@ -119,7 +119,7 @@
             if (findUser != null)
             {
                 await SignInManager.SignInAsync(findUser, isPersistent: false);
-                RedirectManager.RedirectTo("/admin-home");
+                RedirectManager.RedirectTo("/admin-clients");
             }
         }
         if (result.Succeeded)
