@@ -8,6 +8,7 @@ using System;
 using webStudio.Components;
 using webStudio.Components.Account;
 using webStudio.Data;
+using webStudio.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +20,7 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
+builder.Services.AddTransient<CategoryService>();
 
 builder.Services.AddAuthentication(options =>
     {

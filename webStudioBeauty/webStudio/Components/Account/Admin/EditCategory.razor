@@ -1,0 +1,74 @@
+﻿@page "/edit-category"
+@page "/edit-category/{Id:int}"
+@using webStudio.Models
+@using webStudio.Services
+
+@inject NavigationManager _navigationManager
+@inject CategoryService _categoryService
+@inject IJSRuntime _jSRuntime
+@layout AdminLayout
+
+<h3>EditCategory</h3>
+
+@if(Id == 0)
+{
+   
+    <nav aria-label="breadcrumb" class="bg-light rounded px-3 py-2 mb-4">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="/" style="color: #f8b7d8;">Повернутися до категорій</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Додати категорію</li>
+        </ol>
+    </nav>
+}
+else
+{
+    <nav aria-label="breadcrumb" class="bg-light rounded px-3 py-2 mb-4">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="/" style="color: #f8b7d8;">Повернутися до категорій</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Редагувати категорію</li>
+        </ol>
+    </nav>
+}
+
+<EditForm Model="@category" OnValidSubmit="HandleValidSubmit" FormName="Category"
+          class="card-body shadow-primary-lg p-3 mb-5 rounded">
+    <DataAnnotationsValidator />
+    <div class="row d-flex">
+        <div class="col-lg-12 form-group">
+            <label for="category">Categories:<span style="color:red;">*</span></label>
+            <InputText id="category" @bind-Value="category.NameCategory" class="form-control promotions-datepicker" />
+            <ValidationMessage For="@(() => category.NameCategory)" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="ml-sm-3 m-auto">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <NavLink class="btn btn-outline-secondary" href="/admin-category">Cancel</NavLink>
+        </div>
+    </div>
+</EditForm>
+
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private readonly List<Category> categories = new List<Category>();
+    private Category category = new Category();
+
+    protected override async Task OnInitializedAsync()
+    
+    {
+        if(Id == 0)
+        {
+           
+        }
+
+        
+    }
+
+    private void HandleValidSubmit()
+    {
+        _categoryService.Save(category);
+    }
+}
