@@ -39,15 +39,15 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 // when deploy don't for get coments
-builder.WebHost.ConfigureKestrel(options =>
-{
-    options.ListenAnyIP(80); // HTTP
-    options.ListenAnyIP(443, o => o.UseHttps()); // HTTPS
-});
-// when deploy don't for get coments
-builder.Services.AddDataProtection()   // add save keys
-    .PersistKeysToFileSystem(new DirectoryInfo("/keys"))
-    .SetApplicationName("webStudio");
+//builder.WebHost.ConfigureKestrel(options =>
+//{
+//    options.ListenAnyIP(80); // HTTP
+//    options.ListenAnyIP(443, o => o.UseHttps()); // HTTPS
+//});
+//// when deploy don't for get coments
+//builder.Services.AddDataProtection()   // add save keys
+//    .PersistKeysToFileSystem(new DirectoryInfo("/keys"))
+//    .SetApplicationName("webStudio");
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
