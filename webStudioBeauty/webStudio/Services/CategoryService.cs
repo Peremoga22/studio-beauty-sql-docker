@@ -34,5 +34,29 @@ namespace webStudio.Services
             }
             _applicationDbContext.SaveChanges();
         }
+
+        public async Task<List<Category>> GetAllCategoryListAsync()
+        {
+            var result = await _applicationDbContext.Categories.ToListAsync();
+            return result;
+        }
+
+        public async Task<Category> Edit(int categoryId)
+        {
+            var result = await _applicationDbContext.Categories.FirstOrDefaultAsync(c => c.Id == categoryId);
+            return result;
+        }
+
+        public async Task DeleteAsync(int categoryId)
+        {
+            var result = await _applicationDbContext.Categories.SingleOrDefaultAsync(c => c.Id == categoryId);
+            if (result == null)
+            {
+                return;
+            }
+
+            _applicationDbContext.Categories.Remove(result);
+            await _applicationDbContext.SaveChangesAsync();
+        }
     }
 }

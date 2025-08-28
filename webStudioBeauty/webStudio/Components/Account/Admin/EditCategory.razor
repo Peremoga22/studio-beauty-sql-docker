@@ -23,7 +23,7 @@
 
         <nav aria-label="breadcrumb" class="bg-light rounded px-3 py-4 mb-4">
             <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="/" style="color: #f8b7d8;">Повернутися до категорій</a></li>
+                <li class="breadcrumb-item"><a href="/admin-category" style="color: #f8b7d8;">Повернутися до категорій</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Додати категорію</li>
             </ol>
         </nav>
@@ -32,7 +32,7 @@
     {
         <nav aria-label="breadcrumb" class="bg-light rounded px-3 py-4 mb-4">
             <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="/" style="color: #f8b7d8;">Повернутися до категорій</a></li>
+                <li class="breadcrumb-item"><a href="/admin-category" style="color: #f8b7d8;">Повернутися до категорій</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Редагувати категорію</li>
             </ol>
         </nav>
@@ -81,19 +81,23 @@
 
 
 @code {
-    public Category model = new() ;
+    private Category model = new() ;
 
     [Parameter] public int Id { get; set; }
     [SupplyParameterFromForm]
     private InputModel InputCategory { get; set; } = new();
-
+    private List<Category> categories = new();
 
     protected override async Task OnInitializedAsync()
     {
         var state = await _authState.GetAuthenticationStateAsync();
         model.UserId =  _userManager.GetUserId(state.User);
-        model.Cosmetologies = new List<CosmetologyTherapy>();
-        model.Messages = new List<MessageTherapy>();
+
+        if (Id != 0)
+        {
+            model = await _categoryService.Edit(Id);
+            InputCategory.Name = model.NameCategory;
+        }               
     }
 
     private async Task HandleValidSubmit()
