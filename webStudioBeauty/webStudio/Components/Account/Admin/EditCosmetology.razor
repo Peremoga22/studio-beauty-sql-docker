@@ -70,7 +70,7 @@
                     <button type="submit" class="btn btn-sm btn-primary px-3">
                         <i class="bi bi-save"></i> Зберегти
                     </button>
-                    <NavLink class="btn btn-sm btn-outline-secondary px-3" href="/admin-category">
+                    <NavLink class="btn btn-sm btn-outline-secondary px-3" href="/admin-cosmetologe">
                         <i class="bi bi-x-circle"></i> Скасувати
                     </NavLink>
                 </div>
@@ -78,7 +78,7 @@
         </EditForm>
     </div>
 
-    <EditForm Model="@model" OnValidSubmit="SaveAsync" class="card shadow-sm p-3">
+   @*  <EditForm Model="@model" OnValidSubmit="SaveAsync" class="card shadow-sm p-3">
         <DataAnnotationsValidator />
         <ValidationSummary />
 
@@ -102,7 +102,7 @@
             <button class="btn btn-primary">Зберегти</button>
             <NavLink class="btn btn-outline-secondary" href="/cosmetology-list">Скасувати</NavLink>
         </div>
-    </EditForm>
+    </EditForm> *@
 </div>
 
 
@@ -126,7 +126,7 @@
 
     private void OnFileSelected(InputFileChangeEventArgs e)
     {
-      
+
         uploadedFile = e.File;
     }
 
@@ -134,7 +134,7 @@
     {
         if (uploadedFile is not null)
         {
-           
+
             if (uploadedFile.Size > maxSize)
                 throw new InvalidOperationException("Файл завеликий (максимум 5 МБ).");
         }
@@ -143,7 +143,7 @@
         var allowed = new[] { ".jpg", ".jpeg", ".png" };
         if (!allowed.Contains(ext))
             throw new InvalidOperationException("Дозволені формати: JPG,JPEG, PNG");
-        
+
         var relativeFolder = "/uploads/cosmetology";
         var physicalFolder = Path.Combine(Env.WebRootPath, relativeFolder.TrimStart('/'));
         Directory.CreateDirectory(physicalFolder);
@@ -159,8 +159,10 @@
 
     private async Task HandleValidSubmit()
     {
+        int tempCategory = 8;
+       // model.CategoryId = tempCategory;
         _cosmetologyService.Save(model);
-        _navigationManager.NavigateTo("/admin-category");
+        _navigationManager.NavigateTo("/admin-cosmetologe");
     }
 
     private void Cancel()

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using webStudio.Data;
 
@@ -11,9 +12,11 @@ using webStudio.Data;
 namespace webStudio.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250901111654_AddCosmetologyCard")]
+    partial class AddCosmetologyCard
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -281,7 +284,7 @@ namespace webStudio.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("CategoryId")
+                    b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
@@ -307,7 +310,11 @@ namespace webStudio.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CategoryId")
+                    b.Property<string>("CategoryId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CategoryId1")
                         .HasColumnType("int");
 
                     b.Property<string>("DescriptionCard")
@@ -315,10 +322,6 @@ namespace webStudio.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PathFolderImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -331,7 +334,7 @@ namespace webStudio.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
+                    b.HasIndex("CategoryId1");
 
                     b.ToTable("CosmetologyTherapyCards");
                 });
@@ -441,16 +444,20 @@ namespace webStudio.Migrations
 
             modelBuilder.Entity("webStudio.Models.CosmetologyTherapy", b =>
                 {
-                    b.HasOne("webStudio.Models.Category", null)
+                    b.HasOne("webStudio.Models.Category", "Category")
                         .WithMany("Cosmetologies")
-                        .HasForeignKey("CategoryId");
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("webStudio.Models.CosmetologyTherapyCard", b =>
                 {
                     b.HasOne("webStudio.Models.CosmetologyTherapy", "Category")
                         .WithMany()
-                        .HasForeignKey("CategoryId")
+                        .HasForeignKey("CategoryId1")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
