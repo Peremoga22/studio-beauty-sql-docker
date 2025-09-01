@@ -28,7 +28,7 @@
     </nav>          
     <div class="row g-3 mb-4">
         <!-- Форма титулки сторінки -->
-        <div class="col-12 col-lg-6">
+        <div class="col-12 col-lg-12">
             <EditForm Model="@modelTitle"
                       method="post"
                       OnSubmit="HandleValidSubmit"
@@ -79,6 +79,12 @@
 
        
     </div>
+     <header class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">       
+        <NavLink class="btn btn-success btn-sm px-3 d-flex align-items-center"
+                 href="/edit-cosmetology-card">
+            <i class="bi bi-collection me-1"></i><span class="d-none d-sm-inline">Додати картку</span>
+        </NavLink>
+    </header>
 
     <!-- Сітка карток послуг -->
     <section>
@@ -153,7 +159,7 @@
     private async Task HandleValidSubmit()
     {
         _cosmetologyService.SaveTitle(modelTitle);
-        _navigationManager.NavigateTo("/admin-cosmetologe");
+        _navigationManager.NavigateTo("/admin-cosmetology");
     }
    
     protected void EditAdmin(int id)

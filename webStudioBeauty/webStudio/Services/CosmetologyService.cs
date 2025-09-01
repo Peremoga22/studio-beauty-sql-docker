@@ -65,7 +65,7 @@ namespace webStudio.Services
 
         public async Task<CosmetologyTherapy> EditCosmetologyTherapyFirstOrDefaultAsync()
         {
-            var result = await _applicationDbContext.CosmetologyTherapies.FirstOrDefaultAsync();
+            var result = await _applicationDbContext.CosmetologyTherapies.FirstOrDefaultAsync() ?? new CosmetologyTherapy();
             return result;
         }
 
