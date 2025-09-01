@@ -1,0 +1,170 @@
+﻿@page "/edit-cosmetology"
+@page "/edit-cosmetology/{Id:int}"
+
+@inject IWebHostEnvironment Env
+@using Microsoft.AspNetCore.Components.Forms
+@inject NavigationManager _navigationManager
+@inject CosmetologyService _cosmetologyService
+@inject IJSRuntime _jSRuntime
+@layout AdminLayout
+@attribute [Authorize(Roles = "Admin")]
+@rendermode InteractiveServer
+
+<h3>EditCosmetology</h3>
+
+<div class="container my-4">
+    @if (Id == 0)
+    {
+
+        <nav aria-label="breadcrumb" class="bg-light rounded px-3 py-4 mb-4">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="/admin-cosmetology" style="color: #f8b7d8;">Повернутися до категорій</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Додати категорію</li>
+            </ol>
+        </nav>
+    }
+    else
+    {
+        <nav aria-label="breadcrumb" class="bg-light rounded px-3 py-4 mb-4">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="/admin-cosmetology" style="color: #f8b7d8;">Повернутися до категорій</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Редагувати категорію</li>
+            </ol>
+        </nav>
+    }
+
+    <div class="d-flex justify-content-center">
+        <EditForm Model="@model" method="post" OnSubmit="HandleValidSubmit"
+                  FormName="CosmetologyTherapy"
+                  class="card shadow-sm border rounded-3 p-4 bg-white"
+                  style="width: 100%; max-width: 600px;">
+
+            <DataAnnotationsValidator />
+            <ValidationSummary class="alert alert-danger small" />
+
+            <div class="card-body">
+                <h5 class="card-title text-center mb-3 text-dark fw-bold">
+                    @(Id == 0 ? "Створити категорію" : "Редагувати категорію")
+                </h5>
+
+                <div class="mb-3">
+                    <label for="TitlePage" class="form-label fw-semibold small">
+                        Назва сторінки <span class="text-danger">*</span>
+                    </label>
+                    <InputText @bind-Value="model.TitlePage" id="InputTitlePaage"
+                               class="form-control form-control-sm"
+                               placeholder="Введіть назву..." />
+                    <ValidationMessage For="@(() => model.TitlePage)" class="text-danger small" />
+                </div>
+                <div class="mb-3">
+                    <label for="TitlePage" class="form-label fw-semibold small">
+                        Опис сторінки <span class="text-danger">*</span>
+                    </label>
+                    <InputText @bind-Value="model.Description" id="InputDescription"
+                               class="form-control form-control-sm"
+                               placeholder="Введіть назву..." />
+                    <ValidationMessage For="@(() => model.Description)" class="text-danger small" />
+                </div>               
+
+                <div class="d-flex justify-content-end gap-2 mt-3">
+                    <button type="submit" class="btn btn-sm btn-primary px-3">
+                        <i class="bi bi-save"></i> Зберегти
+                    </button>
+                    <NavLink class="btn btn-sm btn-outline-secondary px-3" href="/admin-category">
+                        <i class="bi bi-x-circle"></i> Скасувати
+                    </NavLink>
+                </div>
+            </div>
+        </EditForm>
+    </div>
+
+    <EditForm Model="@model" OnValidSubmit="SaveAsync" class="card shadow-sm p-3">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-3">
+            <label class="form-label">Назва</label>
+            <InputText @bind-Value="model.ImageUrl" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Фото (jpg/png/webp)</label>
+            <InputFile OnChange="OnFileSelected" accept=".jpg,.jpeg,.png" />
+            @if (!string.IsNullOrEmpty(model.ImageUrl))
+            {
+                <div class="mt-2">
+                    <img src="@model.ImageUrl" alt="preview" style="max-width:220px;border-radius:8px;" />
+                </div>
+            }
+        </div>
+
+        <div class="d-flex justify-content-end gap-2">
+            <button class="btn btn-primary">Зберегти</button>
+            <NavLink class="btn btn-outline-secondary" href="/cosmetology-list">Скасувати</NavLink>
+        </div>
+    </EditForm>
+</div>
+
+
+
+
+@code {
+    [Parameter] 
+    public int Id { get; set; }
+    private CosmetologyTherapy model = new();
+    private List<CosmetologyTherapy> cosmetologies = new();
+    private IBrowserFile? uploadedFile;
+    private  const long maxSize = 5 * 1024 * 1024;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id != 0)
+        {
+            // model = await _cosmetologyService.Edit(Id);           
+        }
+    }
+
+    private void OnFileSelected(InputFileChangeEventArgs e)
+    {
+      
+        uploadedFile = e.File;
+    }
+
+    private async Task SaveAsync()
+    {
+        if (uploadedFile is not null)
+        {
+           
+            if (uploadedFile.Size > maxSize)
+                throw new InvalidOperationException("Файл завеликий (максимум 5 МБ).");
+        }
+
+        var ext = Path.GetExtension(uploadedFile.Name).ToLowerInvariant();
+        var allowed = new[] { ".jpg", ".jpeg", ".png" };
+        if (!allowed.Contains(ext))
+            throw new InvalidOperationException("Дозволені формати: JPG,JPEG, PNG");
+        
+        var relativeFolder = "/uploads/cosmetology";
+        var physicalFolder = Path.Combine(Env.WebRootPath, relativeFolder.TrimStart('/'));
+        Directory.CreateDirectory(physicalFolder);
+
+        var fileName = $"{Guid.NewGuid():N}{ext}";
+        var physicalPath = Path.Combine(physicalFolder, fileName);
+
+        await using (var stream = File.Create(physicalPath))
+        {
+            await uploadedFile.OpenReadStream(maxSize).CopyToAsync(stream);
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        _cosmetologyService.Save(model);
+        _navigationManager.NavigateTo("/admin-category");
+    }
+
+    private void Cancel()
+    {
+        
+    }
+}

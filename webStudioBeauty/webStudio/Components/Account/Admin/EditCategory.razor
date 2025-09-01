@@ -83,7 +83,8 @@
 @code {
     private Category model = new() ;
 
-    [Parameter] public int Id { get; set; }
+    [Parameter]
+    public int Id { get; set; }
     [SupplyParameterFromForm]
     private InputModel InputCategory { get; set; } = new();
     private List<Category> categories = new();
