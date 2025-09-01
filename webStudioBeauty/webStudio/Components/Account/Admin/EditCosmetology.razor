@@ -185,6 +185,9 @@
     private IBrowserFile? uploadedFile;
     private  const long maxSize = 5 * 1024 * 1024;
 
+    private const long MaxSize = 5 * 1024 * 1024;
+    private const string UploadsSubfolder = "uploads/cosmetology";
+
     protected override async Task OnInitializedAsync()
     {
         if (Id != 0)
@@ -206,35 +209,44 @@
     {
         if (uploadedFile is not null)
         {
+            var ext = Path.GetExtension(uploadedFile.Name)?.ToLowerInvariant();
+            var allowed = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".jpg", ".jpeg", ".png", ".webp" };
+            if (string.IsNullOrWhiteSpace(ext) || !allowed.Contains(ext))
+                throw new InvalidOperationException("Дозволені формати: JPG, JPEG, PNG, WEBP.");
 
-            if (uploadedFile.Size > maxSize)
+            if (uploadedFile.Size > MaxSize)
                 throw new InvalidOperationException("Файл завеликий (максимум 5 МБ).");
-        }
 
-        var ext = Path.GetExtension(uploadedFile.Name).ToLowerInvariant();
-        var allowed = new[] { ".jpg", ".jpeg", ".png" };
-        if (!allowed.Contains(ext))
-            throw new InvalidOperationException("Дозволені формати: JPG,JPEG, PNG");
+            var webRoot = Env.WebRootPath ?? throw new InvalidOperationException("WebRootPath недоступний.");
+            var physicalFolder = Path.Combine(webRoot, UploadsSubfolder);
+            Directory.CreateDirectory(physicalFolder);
 
-        var relativeFolder = "/uploads/cosmetology";
-        var physicalFolder = Path.Combine(Env.WebRootPath, relativeFolder.TrimStart('/'));
-        Directory.CreateDirectory(physicalFolder);
+            var fileName = $"{Guid.NewGuid():N}{ext}";
+            var physicalPath = Path.Combine(physicalFolder, fileName);
 
-        var fileName = $"{Guid.NewGuid():N}{ext}";
-        var physicalPath = Path.Combine(physicalFolder, fileName);
-        cosmetologyTherapyCard.PathFolderImageUrl = physicalPath;
-        cosmetologyTherapyCard.ImageUrl = fileName;
+            // Запис із дозволом на читання іншими процесами
+            await using (var fs = new FileStream(physicalPath, FileMode.Create, FileAccess.Write, FileShare.Read, 81920, true))
+            {
+                await uploadedFile.OpenReadStream(MaxSize).CopyToAsync(fs);
+            }
 
-        await using (var stream = File.Create(physicalPath))
-        {
-            await uploadedFile.OpenReadStream(maxSize).CopyToAsync(stream);
+            // (опц.) видалити старе
+            if (!string.IsNullOrEmpty(cosmetologyTherapyCard.ImageUrl))
+            {
+                var oldPhysical = Path.Combine(webRoot, cosmetologyTherapyCard.ImageUrl.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
+                try { if (File.Exists(oldPhysical)) File.Delete(oldPhysical); } catch { /* лог або відкладити */ }
+            }
+
+            // В БД — тільки відносний веб-шлях
+            cosmetologyTherapyCard.ImageUrl = "/" + Path.Combine(UploadsSubfolder, fileName).Replace("\\", "/");
+            cosmetologyTherapyCard.PathFolderImageUrl = physicalFolder;
         }
 
         _cosmetologyService.SaveCosmetologyTherapyCard(cosmetologyTherapyCard);
-        await _cosmetologyService.GetAllCosmetologyTherapyCardListAsync();
-        this.StateHasChanged();
+        _navigationManager.NavigateTo("/cosmetology-list");
     }
 
+    ///uploads/cosmetology/ff78aa09c7ee412d9ed9fdf81d336c75.jpg
     private async Task HandleValidSubmit()
     {
         int tempCategory = 8;
