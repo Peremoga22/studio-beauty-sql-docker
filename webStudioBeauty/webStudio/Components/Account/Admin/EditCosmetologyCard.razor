@@ -1,0 +1,165 @@
+﻿@page "/edit-cosmetology-card"
+@page "/edit-cosmetology-card/{Id:int}"
+
+@using System.Globalization
+@inject IWebHostEnvironment Env
+@inject NavigationManager _navigationManager
+@inject CosmetologyService _cosmetologyService
+@rendermode InteractiveServer
+
+<h3 style="padding-top: 7%;"></h3>
+<div class="col-12 col-lg-6">
+    <EditForm Model="@cosmetologyTherapyCard"
+              OnValidSubmit="SaveAsync"
+              class="card form-card">
+
+        <DataAnnotationsValidator />
+        <ValidationSummary class="alert alert-danger small" />
+
+        <div class="card-body">
+            <h5 class="card-title text-center mb-3">
+                @(cosmetologyTherapyCard.Id == 0 ? "Додати нову картку" : "Редагувати картку")
+            </h5>
+
+            <div class="mb-3">
+                <label for="TitleCard" class="form-label form-label-compact">
+                    Назва картки <span class="text-danger">*</span>
+                </label>
+                <InputText id="TitleCard"
+                           @bind-Value="cosmetologyTherapyCard.TitleCard"
+                           class="form-control form-control-sm"
+                           placeholder="Введіть назву..." />
+                <ValidationMessage For="@(() => cosmetologyTherapyCard.TitleCard)" class="text-danger small" />
+            </div>
+
+            <div class="mb-3">
+                <label for="DescriptionCard" class="form-label form-label-compact">
+                    Опис картки <span class="text-danger">*</span>
+                </label>
+                <InputText id="DescriptionCard"
+                           @bind-Value="cosmetologyTherapyCard.DescriptionCard"
+                           class="form-control form-control-sm"
+                           placeholder="Короткий опис..." />
+                <ValidationMessage For="@(() => cosmetologyTherapyCard.DescriptionCard)" class="text-danger small" />
+            </div>
+
+            <div class="mb-3">
+                <label for="Price" class="form-label form-label-compact">
+                    Ціна за послугу <span class="text-danger">*</span>
+                </label>
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text">₴</span>
+                    <InputNumber id="Price"
+                                 @bind-Value="cosmetologyTherapyCard.Price"
+                                 class="form-control"
+                                 placeholder="0" />
+                </div>
+                <small class="text-muted">Вкажіть вартість у гривнях.</small>
+                <ValidationMessage For="@(() => cosmetologyTherapyCard.Price)" class="text-danger small" />
+            </div>
+
+            <div class="mb-0">
+                <label class="form-label form-label-compact">Фото (jpg/jpeg/png)</label>
+                <InputFile OnChange="OnFileSelected"
+                           class="form-control form-control-sm"
+                           accept=".jpg,.jpeg,.png" />
+
+                @if (!string.IsNullOrEmpty(cosmetologyTherapyCard.ImageUrl))
+                {
+                    <div class="mt-3 text-left">
+                        <img src="@cosmetologyTherapyCard.ImageUrl"
+                             alt="preview"
+                             class="img-thumb-soft img-fluid"
+                             style="max-width: 200px; max-height: 200px; object-fit: cover; border-radius: 0.5rem;" />
+                    </div>
+
+                }
+            </div>
+        </div>
+
+        <div class="card-footer d-flex flex-column flex-sm-row justify-content-end gap-2">
+            <button type="submit" class="btn btn-primary btn-sm px-3 w-100 w-sm-auto">
+                <i class="bi bi-save me-1"></i>
+                <span class="d-none d-sm-inline">Зберегти</span>
+            </button>
+
+            <NavLink class="btn btn-outline-secondary btn-sm px-3 w-100 w-sm-auto"
+                     href="/edit-cosmetology">
+                <i class="bi bi-x-circle me-1"></i>
+                <span class="d-none d-sm-inline">Скасувати</span>
+            </NavLink>
+        </div>
+
+    </EditForm>
+</div>
+
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    private CosmetologyTherapyCard cosmetologyTherapyCard = new();
+   
+    private IBrowserFile? uploadedFile;
+    private const long maxSize = 5 * 1024 * 1024;
+
+    private const long MaxSize = 5 * 1024 * 1024;
+    private const string UploadsSubfolder = "uploads/cosmetology";
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id != 0)
+        {
+            cosmetologyTherapyCard = await _cosmetologyService.EditCosmetologyTherapyCard(Id);
+        }
+      
+        this.StateHasChanged();
+    }
+
+    private void OnFileSelected(InputFileChangeEventArgs e)
+    {
+
+        uploadedFile = e.File;
+    }
+
+    private async Task SaveAsync()
+    {
+        if (uploadedFile is not null)
+        {
+            var ext = Path.GetExtension(uploadedFile.Name)?.ToLowerInvariant();
+            var allowed = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".jpg", ".jpeg", ".png", ".webp" };
+            if (string.IsNullOrWhiteSpace(ext) || !allowed.Contains(ext))
+                throw new InvalidOperationException("Дозволені формати: JPG, JPEG, PNG, WEBP.");
+
+            if (uploadedFile.Size > MaxSize)
+                throw new InvalidOperationException("Файл завеликий (максимум 5 МБ).");
+
+            var webRoot = Env.WebRootPath ?? throw new InvalidOperationException("WebRootPath недоступний.");
+            var physicalFolder = Path.Combine(webRoot, UploadsSubfolder);
+            Directory.CreateDirectory(physicalFolder);
+
+            var fileName = $"{Guid.NewGuid():N}{ext}";
+            var physicalPath = Path.Combine(physicalFolder, fileName);
+
+            await using (var fs = new FileStream(physicalPath, FileMode.Create, FileAccess.Write, FileShare.Read, 81920, true))
+            {
+                await uploadedFile.OpenReadStream(MaxSize).CopyToAsync(fs);
+            }
+
+            if (!string.IsNullOrEmpty(cosmetologyTherapyCard.ImageUrl))
+            {
+                var oldPhysical = Path.Combine(webRoot, cosmetologyTherapyCard.ImageUrl.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
+                try { if (File.Exists(oldPhysical)) File.Delete(oldPhysical); } catch { /* лог або відкладити */ }
+            }
+
+            cosmetologyTherapyCard.ImageUrl = "/" + Path.Combine(UploadsSubfolder, fileName).Replace("\\", "/");
+            cosmetologyTherapyCard.PathFolderImageUrl = physicalFolder;
+        }
+
+        _cosmetologyService.SaveCosmetologyTherapyCard(cosmetologyTherapyCard);
+        _navigationManager.NavigateTo("/edit-cosmetology");
+    }
+
+   
+
+   
+}
