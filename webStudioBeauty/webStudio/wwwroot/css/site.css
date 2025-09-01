@@ -193,3 +193,19 @@ app {
 .text-light-pink {
     color: #f8b7d8 !important;
 }
+
+
+.product-card .object-fit-cover {
+    object-fit: cover;
+}
+
+.line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3; 
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.bg-primary-subtle { 
+    background-color: #e8f0ff;
+}

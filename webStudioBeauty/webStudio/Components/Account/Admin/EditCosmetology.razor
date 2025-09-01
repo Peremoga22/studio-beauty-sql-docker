@@ -1,6 +1,7 @@
 ﻿@page "/edit-cosmetology"
 @page "/edit-cosmetology/{Id:int}"
 
+@using System.Globalization
 @inject IWebHostEnvironment Env
 @using Microsoft.AspNetCore.Components.Forms
 @inject NavigationManager _navigationManager
@@ -34,7 +35,7 @@
     }
 
     <div class="d-flex justify-content-center">
-        <EditForm Model="@model" method="post" OnSubmit="HandleValidSubmit"
+        <EditForm Model="@modelTitle" method="post" OnSubmit="HandleValidSubmit"
                   FormName="CosmetologyTherapy"
                   class="card shadow-sm border rounded-3 p-4 bg-white"
                   style="width: 100%; max-width: 600px;">
@@ -44,26 +45,26 @@
 
             <div class="card-body">
                 <h5 class="card-title text-center mb-3 text-dark fw-bold">
-                    @(Id == 0 ? "Створити категорію" : "Редагувати категорію")
+                    @(Id == 0 ? "Назва титулки сторінки" : "Редагувати титолку сторінки")
                 </h5>
 
                 <div class="mb-3">
                     <label for="TitlePage" class="form-label fw-semibold small">
                         Назва сторінки <span class="text-danger">*</span>
                     </label>
-                    <InputText @bind-Value="model.TitlePage" id="InputTitlePaage"
+                    <InputText @bind-Value="modelTitle.TitlePage" id="InputTitlePaage"
                                class="form-control form-control-sm"
                                placeholder="Введіть назву..." />
-                    <ValidationMessage For="@(() => model.TitlePage)" class="text-danger small" />
+                    <ValidationMessage For="@(() => modelTitle.TitlePage)" class="text-danger small" />
                 </div>
                 <div class="mb-3">
                     <label for="TitlePage" class="form-label fw-semibold small">
                         Опис сторінки <span class="text-danger">*</span>
                     </label>
-                    <InputText @bind-Value="model.Description" id="InputDescription"
+                    <InputText @bind-Value="modelTitle.Description" id="InputDescription"
                                class="form-control form-control-sm"
                                placeholder="Введіть назву..." />
-                    <ValidationMessage For="@(() => model.Description)" class="text-danger small" />
+                    <ValidationMessage For="@(() => modelTitle.Description)" class="text-danger small" />
                 </div>               
 
                 <div class="d-flex justify-content-end gap-2 mt-3">
@@ -76,43 +77,111 @@
                 </div>
             </div>
         </EditForm>
-    </div>
-
-   @*  <EditForm Model="@model" OnValidSubmit="SaveAsync" class="card shadow-sm p-3">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-
-        <div class="mb-3">
-            <label class="form-label">Назва</label>
-            <InputText @bind-Value="model.ImageUrl" class="form-control" />
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Фото (jpg/png/webp)</label>
-            <InputFile OnChange="OnFileSelected" accept=".jpg,.jpeg,.png" />
-            @if (!string.IsNullOrEmpty(model.ImageUrl))
-            {
-                <div class="mt-2">
-                    <img src="@model.ImageUrl" alt="preview" style="max-width:220px;border-radius:8px;" />
-                </div>
-            }
-        </div>
-
-        <div class="d-flex justify-content-end gap-2">
-            <button class="btn btn-primary">Зберегти</button>
-            <NavLink class="btn btn-outline-secondary" href="/cosmetology-list">Скасувати</NavLink>
-        </div>
-    </EditForm> *@
+    </div>       
 </div>
 
+<div class="container my-4">
+    <EditForm Model="@cosmetologyTherapyCard"
+              OnValidSubmit="SaveAsync"
+              class="card shadow-sm border-0 rounded-3 p-4 bg-light"
+              style="max-width: 600px; margin:auto;">
 
+        <DataAnnotationsValidator />
+        <ValidationSummary class="alert alert-danger small" />
+        <h5 class="card-title text-center mb-4 text-primary fw-bold">
+            @(cosmetologyTherapyCard.Id == 0 ? "Додати нову картку" : "Редагувати картку")
+        </h5>    
+        <div class="mb-3">
+            <label for="TitleCard" class="form-label fw-semibold">
+                Назва карточки <span class="text-danger">*</span>
+            </label>
+            <InputText @bind-Value="cosmetologyTherapyCard.TitleCard"
+                       id="TitleCard"
+                       class="form-control form-control-sm"
+                       placeholder="Введіть назву..." />
+            <ValidationMessage For="@(() => cosmetologyTherapyCard.TitleCard)" class="text-danger small" />
+        </div>
+        <div class="mb-3">
+            <label for="DescriptionCard" class="form-label fw-semibold">
+                Опис карточки <span class="text-danger">*</span>
+            </label>
+            <InputText @bind-Value="cosmetologyTherapyCard.DescriptionCard"
+                       id="DescriptionCard"
+                       class="form-control form-control-sm"
+                       placeholder="Введіть опис..." />
+            <ValidationMessage For="@(() => cosmetologyTherapyCard.DescriptionCard)" class="text-danger small" />
+        </div>
+        <div class="mb-3">
+            <label for="Price" class="form-label fw-semibold">
+                Ціна за послугу <span class="text-danger">*</span>
+            </label>
+            <InputNumber @bind-Value="cosmetologyTherapyCard.Price"
+                       id="Price"
+                       class="form-control form-control-sm"
+                       placeholder="Введіть ціну..." />
+            <ValidationMessage For="@(() => cosmetologyTherapyCard.Price)" class="text-danger small" />
+        </div>  
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Фото (jpg/jpeg/png)</label>
+            <InputFile OnChange="OnFileSelected"
+                       class="form-control form-control-sm"
+                       accept=".jpg,.jpeg,.png" />
+
+            @if (!string.IsNullOrEmpty(cosmetologyTherapyCard.ImageUrl))
+            {
+                <div class="mt-3 text-center">
+                    <img src="@cosmetologyTherapyCard.ImageUrl"
+                         alt="preview"
+                         class="img-thumbnail shadow-sm"
+                         style="max-height:200px; object-fit:contain;" />
+                </div>
+            }
+        </div>    
+        <div class="d-flex justify-content-end gap-2 mt-3">
+            <button type="submit" class="btn btn-primary px-4">
+                <i class="bi bi-save"></i> Зберегти
+            </button>
+            <NavLink class="btn btn-outline-secondary px-4" href="/cosmetology-list">
+                <i class="bi bi-x-circle"></i> Скасувати
+            </NavLink>
+        </div>
+    </EditForm>
+</div>
+
+<div class="row g-3">
+    @foreach (var item in cosmetologyTherapyCards)  
+    {
+        <div class="col-12 col-sm-6 col-lg-4">
+            <div class="card shadow-sm border-0 rounded-3 product-card h-100">
+                <div class="ratio ratio-4x3">
+                    <img src="@item.ImageUrl"
+                         alt="@item.TitleCard"
+                         class="card-img-top object-fit-cover"
+                         loading="lazy" >                         
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h6 class="card-title mb-2 text-dark fw-semibold">@item.TitleCard</h6>
+                    <p class="card-text text-muted mb-3 line-clamp-3">@item.DescriptionCard</p>
+
+                    <div class="mt-auto d-flex align-items-center justify-content-between">
+                        <span class="badge bg-primary-subtle text-primary fs-6 px-3 py-2 rounded-pill">
+                            @item.Price.ToString("C", new CultureInfo("uk-UA"))
+                        </span>                       
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
 
 
 @code {
     [Parameter] 
     public int Id { get; set; }
-    private CosmetologyTherapy model = new();
+    private CosmetologyTherapy modelTitle = new();
+    private CosmetologyTherapyCard cosmetologyTherapyCard = new();
     private List<CosmetologyTherapy> cosmetologies = new();
+    private List<CosmetologyTherapyCard> cosmetologyTherapyCards = new();
     private IBrowserFile? uploadedFile;
     private  const long maxSize = 5 * 1024 * 1024;
 
@@ -120,8 +189,11 @@
     {
         if (Id != 0)
         {
-            // model = await _cosmetologyService.Edit(Id);           
+           
         }
+
+        cosmetologyTherapyCards = await _cosmetologyService.GetAllCosmetologyTherapyCardListAsync();
+        this.StateHasChanged();
     }
 
     private void OnFileSelected(InputFileChangeEventArgs e)
@@ -150,18 +222,24 @@
 
         var fileName = $"{Guid.NewGuid():N}{ext}";
         var physicalPath = Path.Combine(physicalFolder, fileName);
+        cosmetologyTherapyCard.PathFolderImageUrl = physicalPath;
+        cosmetologyTherapyCard.ImageUrl = fileName;
 
         await using (var stream = File.Create(physicalPath))
         {
             await uploadedFile.OpenReadStream(maxSize).CopyToAsync(stream);
         }
+
+        _cosmetologyService.SaveCosmetologyTherapyCard(cosmetologyTherapyCard);
+        await _cosmetologyService.GetAllCosmetologyTherapyCardListAsync();
+        this.StateHasChanged();
     }
 
     private async Task HandleValidSubmit()
     {
         int tempCategory = 8;
        // model.CategoryId = tempCategory;
-        _cosmetologyService.Save(model);
+        _cosmetologyService.SaveTitle(modelTitle);
         _navigationManager.NavigateTo("/admin-cosmetologe");
     }
 

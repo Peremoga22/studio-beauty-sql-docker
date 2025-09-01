@@ -7,7 +7,6 @@
         public string DescriptionCard { get; set; }
         public string ImageUrl { get; set; }
         public decimal Price { get; set; }       
-        public string PathFolderImageUrl { get; set; }
-        public CosmetologyTherapy Category { get; set; } = default!;
+        public string PathFolderImageUrl { get; set; }      
     }
 }

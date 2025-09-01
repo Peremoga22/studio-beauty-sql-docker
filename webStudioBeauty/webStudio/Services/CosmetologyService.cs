@@ -13,7 +13,7 @@ namespace webStudio.Services
             _applicationDbContext = applicationDbContext;
         }
 
-        public void Save(CosmetologyTherapy cosmetology)
+        public void SaveTitle(CosmetologyTherapy cosmetology)
         {
             if (cosmetology.Id == 0)
             {
@@ -33,6 +33,34 @@ namespace webStudio.Services
                 }
             }
             _applicationDbContext.SaveChanges();
+        }
+
+        public void SaveCosmetologyTherapyCard(CosmetologyTherapyCard cosmetologyCard)
+        {
+            if (cosmetologyCard.Id == 0)
+            {
+                var result = _applicationDbContext.CosmetologyTherapyCards.Add(cosmetologyCard);
+                if (result.State == EntityState.Added)
+                {
+                    _applicationDbContext.SaveChanges();
+                }
+            }
+            else
+            {
+                var categoryInDbEntuty = _applicationDbContext.CosmetologyTherapyCards.Find(cosmetologyCard.Id);
+                if (categoryInDbEntuty != null)
+                {
+                    _applicationDbContext.CosmetologyTherapyCards.Update(cosmetologyCard);
+                    _applicationDbContext.SaveChanges();
+                }
+            }
+            _applicationDbContext.SaveChanges();
+        }
+
+        public async Task<List<CosmetologyTherapyCard>> GetAllCosmetologyTherapyCardListAsync()
+        {
+            var result = await _applicationDbContext.CosmetologyTherapyCards.ToListAsync();
+            return result;
         }
     }
 }
