@@ -227,6 +227,7 @@
            
         }
 
+        modelTitle = await _cosmetologyService.EditCosmetologyTherapy() ?? new CosmetologyTherapy();
         cosmetologyTherapyCards = await _cosmetologyService.GetAllCosmetologyTherapyCardListAsync();
         this.StateHasChanged();
     }

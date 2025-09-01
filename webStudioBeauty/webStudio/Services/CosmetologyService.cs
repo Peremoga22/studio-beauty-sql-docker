@@ -62,5 +62,11 @@ namespace webStudio.Services
             var result = await _applicationDbContext.CosmetologyTherapyCards.ToListAsync();
             return result;
         }
+
+        public async Task<CosmetologyTherapy> EditCosmetologyTherapy()
+        {
+            var result = await _applicationDbContext.CosmetologyTherapies.FirstOrDefaultAsync();
+            return result;
+        }
     }
 }
