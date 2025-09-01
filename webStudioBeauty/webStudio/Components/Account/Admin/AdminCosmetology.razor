@@ -2,6 +2,7 @@
 @using Microsoft.AspNetCore.Authorization
 @using webStudio.Components.Layout
 
+@inject CosmetologyService _cosmetologyService
 @rendermode InteractiveServer
 @inject CategoryService _categoryService
 @inject NavigationManager _navigationManager
@@ -69,75 +70,6 @@
                                 <tr>
                                     <td class="px-4 py-3 fw-medium">
                                         <span class="cell-truncate" title="@item.TitlePage">@item.TitlePage</span>
-                                    </td>
-                                    <td class="px-4 py-3 text-end">
-                                        <div class="d-flex flex-wrap justify-content-end gap-2">
-                                            <NavLink class="btn btn-sm btn-outline-primary"
-                                                     href="@($"/edit-cosmetology/{item.Id}")">
-                                                <i class="bi bi-pencil-square"></i>
-                                                <span class="d-none d-sm-inline ms-1">Редагувати</span>
-                                            </NavLink>
-
-                                            <button type="button"
-                                                    class="btn btn-sm btn-outline-danger"
-                                                    @onclick="() => Delete(item.Id)">
-                                                <i class="bi bi-trash"></i>
-                                                <span class="d-none d-sm-inline ms-1">Видалити</span>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-        <h4 class="fw-semibold mb-0">Опис сторінки косметологія</h4>
-
-        <div class="d-flex align-items-center gap-2">
-
-            <NavLink class="btn btn-success shadow-sm d-flex align-items-center justify-content-center"
-                     style="min-height: 44px; min-width: 44px;"
-                     href="/edit-cosmetology">
-
-                <i class="bi bi-plus-lg"></i>
-                <span class="d-none d-sm-inline ms-1">Додати титулку</span>
-            </NavLink>
-        </div>
-    </div>
-
-    <!-- Таблиця в картці -->
-    <div class="card shadow-sm border-0 rounded-3">
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light text-uppercase small text-secondary">
-                        <tr>
-                            <th scope="col" class="px-4 py-3">Назва</th>
-                            <th scope="col" class="px-4 py-3 text-end">Дії</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (cosmetologyList is null || cosmetologyList.Count == 0)
-                        {
-                            <tr>
-                                <td colspan="2" class="text-center text-muted py-4">
-                                    Нічого не знайдено. Спробуйте інший запит або
-                                    <NavLink class="btn btn-sm btn-link text-success" href="/edit-cosmetology">
-                                        додайте першу титулку
-                                    </NavLink>.
-                                </td>
-                            </tr>
-                        }
-                        else
-                        {
-                            @foreach (var item in cosmetologyList)
-                            {
-                                <tr>
-                                    <td class="px-4 py-3 fw-medium">
                                         <span class="cell-truncate" title="@item.Description">@item.Description</span>
                                     </td>
                                     <td class="px-4 py-3 text-end">
@@ -147,16 +79,15 @@
                                                 <i class="bi bi-pencil-square"></i>
                                                 <span class="d-none d-sm-inline ms-1">Редагувати</span>
                                             </NavLink>
-
-                                            <button type="button"
+                                           @*  <button type="button"
                                                     class="btn btn-sm btn-outline-danger"
                                                     @onclick="() => Delete(item.Id)">
                                                 <i class="bi bi-trash"></i>
                                                 <span class="d-none d-sm-inline ms-1">Видалити</span>
-                                            </button>
+                                            </button> *@
                                         </div>
                                     </td>
-                                </tr>
+                                </tr>                              
                             }
                         }
                     </tbody>
@@ -164,22 +95,23 @@
             </div>
         </div>
     </div>
+           
 </div>
 
 
 @code {
     private List<CosmetologyTherapy> cosmetologyList = new();
+    private CosmetologyTherapy modelTitle = new();
 
     protected override async Task OnInitializedAsync()
     {
-        
+        cosmetologyList = await _cosmetologyService.GetAllCosmetologyTherapy();
         this.StateHasChanged();
     }
 
-
-    protected async Task Delete(int categoryId)
-    {
+    // protected async Task Delete(int categoryId)
+    // {
        
-        this.StateHasChanged();
-    }
+    //     this.StateHasChanged();
+    // }
 }

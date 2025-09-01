@@ -1,14 +1,24 @@
 ﻿@page "/cosmetology"
 
+@inject CosmetologyService _cosmetologyService
 
 
 <h3 style="padding-top: 7%;"></h3>
-<section class="text-center pt-32 pb-12 px-4">
-    <h1 class="text-4xl font-extrabold mb-4" style="color: #f8b7d8;">Косметологія</h1>
-    <p class="text-gray-700 text-lg max-w-2xl mx-auto">
-        Професійний догляд за шкірою, турбота про вашу красу, молодість і впевненість кожного дня.
-    </p>
-</section>
+@if(!string.IsNullOrEmpty(modelTitle.TitlePage))
+{
+    <section class="text-center pt-32 pb-12 px-4">
+        <h1 class="text-4xl font-extrabold mb-4" style="color: #f8b7d8;">
+            @(string.IsNullOrEmpty(modelTitle.TitlePage)
+                    ? "Додайте запис на стороні адміністратора!!!"
+                    : modelTitle.TitlePage)
+    </h1>
+        <p class="text-gray-700 text-lg max-w-2xl mx-auto">
+            @(string.IsNullOrEmpty(modelTitle.Description)
+                    ? "Додайте запис на стороні адміністратора!!!"
+                    : modelTitle.Description)
+        </p>
+    </section>
+}
 
 <section class="pt-3">
     <div class="container">
@@ -21,130 +31,34 @@
 
         <div class="row g-4 justify-content-center">
 
-            <div class="col-md-6 col-lg-4">
-                <div class="card h-100 shadow-sm">
-                    <img src="/img/foto5.jpeg" class="card-img-top" alt="Пілінг">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title fw-bold" style="color: #f8b7d8;">Пілінг</h5>
-                        <p class="card-text">Пілінг допомагає вирішити проблеми шкіри: акне, пост-акне, зморшки, пігментація, розширені пори. Покращує загальний стан і текстуру шкіри.</p>
-                        <div class="mt-auto">
-                            <a class="btn btn-outline-primary w-100 mt-3" href="#">від 750 грн</a>
+            @foreach (var item in cosmetologyTherapyCards)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 shadow-sm">
+                        <img src="@item.ImageUrl" class="card-img-top" alt="@item.TitleCard">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title fw-bold" style="color: #f8b7d8;">@item.TitleCard</h5>
+                            <p class="card-text">@item.DescriptionCard</p>
+                            <div class="mt-auto">
+                                <a class="btn btn-outline-primary w-100 mt-3" href="#">@item.Price</a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="col-md-6 col-lg-4">
-                <div class="card h-100 shadow-sm">
-                    <img src="/img/foto11.jpeg" class="card-img-top" alt="Мезотерапія обличчя">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title fw-bold" style="color: #f8b7d8;">Мезотерапія обличчя (60 хв)</h5>
-                        <p class="card-text">Мезотерапія ― це введення препаратів у шкіру і підшкірну жирову клітковину для покращення їх стану. Процедура допомагає зробити шкіру більш еластичною, пружною та зволоженою. За допомогою мезотерапії лікують акне, купероз, прибирають набряклість та синці під очима. Шкіра після введення поживних компонентів розгладжується, зморшки та рубці на обличчі стають менш помітними.</p>
-                        <div class="mt-auto">
-                            <a class="btn btn-outline-primary w-100 mt-3" href="#">від 1500 грн</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-4">
-                <div class="card h-100 shadow-sm">
-                    <img src="/img/foto12.jpeg" class="card-img-top" alt="Мезотерапія">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title fw-bold" style="color: #f8b7d8;">Мезотерапія (30-40 хв)</h5>
-                        <p class="card-text">Мезотерапія периорбітальної ділянки — це косметологічна процедура, спрямована на покращення стану шкіри навколо очей. Вона полягає у введенні спеціальних препаратів (вітамінів, гіалуронової кислоти, амінокислот тощо) за допомогою мікроінʼєкцій.</p>
-                        <div class="mt-auto">
-                            <a class="btn btn-outline-primary w-100 mt-3" href="#">від 800 грн</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-4">
-                <div class="card h-100 shadow-sm">
-                    <img src="/img/foto39.jpeg" class="card-img-top" alt="Мезотерапія шиї">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title fw-bold" style="color: #f8b7d8;">Мезотерапія шиї та декольте (60 хв)</h5>
-                        <p class="card-text">Шия та декольте найбільше видає вік жінки. Тому ці ділянки потребують догляду, так як і личко.</p>
-                        <div class="mt-auto">
-                            <a class="btn btn-outline-primary w-100 mt-3" href="#">від 1500 грн</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-4">
-                <div class="card h-100 shadow-sm">
-                    <img src="/img/foto48.jpeg" class="card-img-top" alt="Мезотерапія">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title fw-bold" style="color: #f8b7d8;">Мезотерапія волосся (20 хв)</h5>
-                        <p class="card-text">Мезотерапія волосся допоможе у боротьбі з випадінням, при себореї, покращить структуру волосся та надасть йому здоровий вигляд.</p>
-                        <div class="mt-auto">
-                            <a class="btn btn-outline-primary w-100 mt-3" href="#">від 700 грн</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-4">
-                <div class="card h-100 shadow-sm">
-                    <img src="/img/foto46.jpeg" class="card-img-top" alt="Мезотерапія">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title fw-bold" style="color: #f8b7d8;">Біоревіталізація (40-60 хв)</h5>
-                        <p class="card-text">
-                            Біоревіталізація - введення препаратів на основі гіалуронової кислоти. Показання: втрата пружності шкіри, порушення водного балансу, вікова шкіра.
-                            Мезотерапія волосся допоможе у боротьбі з випадінням, при себореї, покращить структуру волосся та надасть йому здоровий вигляд.
-                        </p>
-                        <div class="mt-auto">
-                            <a class="btn btn-outline-primary w-100 mt-3" href="#">від 3600 грн</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-4">
-                <div class="card h-100 shadow-sm">
-                    <img src="/img/foto43.jpg" class="card-img-top" alt="Чистка лиця">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title fw-bold" style="color: #f8b7d8;">Чистка лиця (120 хв)</h5>
-                        <p class="card-text">Чистка обличчя допоможе відлущити ороговілий шар шкіри, очистить пори, комедони та запальні елементи, покращить мікроциркуляцію  шкіри.</p>
-                        <div class="mt-auto">
-                            <a class="btn btn-outline-primary w-100 mt-3" href="#">від 1000 грн</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-4">
-                <div class="card h-100 shadow-sm">
-                    <img src="/img/foto50.jpeg" class="card-img-top" alt="Контурна пластика губ">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title fw-bold" style="color: #f8b7d8;">Контурна пластика губ 60 хв </h5>
-                        <p class="card-text">
-                            Контурна пластика губ виконується препаратом Croma Saypha filler виробництво (Австрія), сертифікованим в Україні. Завдяки цьому препарату ваші губки будуть зберігати натуральність. Докорекція безкоштовно.
-                        </p>
-                        <div class="mt-auto">
-                            <a class="btn btn-outline-primary w-100 mt-3" href="#">1 мл - 5000 грн</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-4">
-                <div class="card h-100 shadow-sm">
-                    <img src="/img/foto51.jpeg" class="card-img-top" alt="Карбокситерапія">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title fw-bold" style="color: #f8b7d8;">Карбокситерапія (60 хв)</h5>
-                        <p class="card-text">
-                            Карбокситерапія — популярна процедура, яка дарує шкірі свіжість, сяйво та насичення киснем. Її можна робити разово або курсом для тривалого ефекту.
-                        </p>
-                        <div class="mt-auto">
-                            <a class="btn btn-outline-primary w-100 mt-3" href="#">від 700 грн</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+            }                      
         </div>
     </div>
 </section>
+
+@code{
+
+    private CosmetologyTherapy modelTitle = new();
+    private List<CosmetologyTherapyCard> cosmetologyTherapyCards = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        modelTitle = modelTitle = await _cosmetologyService.EditCosmetologyTherapyFirstOrDefaultAsync();
+        cosmetologyTherapyCards = await _cosmetologyService.GetAllCosmetologyTherapyCardListAsync();
+
+    }
+}

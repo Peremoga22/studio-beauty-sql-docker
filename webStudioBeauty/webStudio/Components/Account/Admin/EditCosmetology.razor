@@ -18,7 +18,7 @@
         <ol class="breadcrumb mb-0">
             <li class="breadcrumb-item">
                 <a class="link-accent" href="/admin-cosmetology">
-                    <i class="bi bi-arrow-left-short"></i> Повернутися до категорій
+                    <i class="bi bi-arrow-left-short"></i> Повернутися до адмін косметології
                 </a>
             </li>
             <li class="breadcrumb-item active" aria-current="page">
@@ -227,7 +227,7 @@
            
         }
 
-        modelTitle = await _cosmetologyService.EditCosmetologyTherapy() ?? new CosmetologyTherapy();
+        modelTitle = await _cosmetologyService.EditCosmetologyTherapyFirstOrDefaultAsync() ?? new CosmetologyTherapy();
         cosmetologyTherapyCards = await _cosmetologyService.GetAllCosmetologyTherapyCardListAsync();
         this.StateHasChanged();
     }
@@ -256,21 +256,18 @@
 
             var fileName = $"{Guid.NewGuid():N}{ext}";
             var physicalPath = Path.Combine(physicalFolder, fileName);
-
-            // Запис із дозволом на читання іншими процесами
+                       
             await using (var fs = new FileStream(physicalPath, FileMode.Create, FileAccess.Write, FileShare.Read, 81920, true))
             {
                 await uploadedFile.OpenReadStream(MaxSize).CopyToAsync(fs);
             }
-
-            // (опц.) видалити старе
+                       
             if (!string.IsNullOrEmpty(cosmetologyTherapyCard.ImageUrl))
             {
                 var oldPhysical = Path.Combine(webRoot, cosmetologyTherapyCard.ImageUrl.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
                 try { if (File.Exists(oldPhysical)) File.Delete(oldPhysical); } catch { /* лог або відкладити */ }
             }
-
-            // В БД — тільки відносний веб-шлях
+            
             cosmetologyTherapyCard.ImageUrl = "/" + Path.Combine(UploadsSubfolder, fileName).Replace("\\", "/");
             cosmetologyTherapyCard.PathFolderImageUrl = physicalFolder;
         }
@@ -278,12 +275,9 @@
         _cosmetologyService.SaveCosmetologyTherapyCard(cosmetologyTherapyCard);
         _navigationManager.NavigateTo("/cosmetology-list");
     }
-
-    ///uploads/cosmetology/ff78aa09c7ee412d9ed9fdf81d336c75.jpg
+    
     private async Task HandleValidSubmit()
-    {
-        int tempCategory = 8;
-       // model.CategoryId = tempCategory;
+    {      
         _cosmetologyService.SaveTitle(modelTitle);
         _navigationManager.NavigateTo("/admin-cosmetologe");
     }
