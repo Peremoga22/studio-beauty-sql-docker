@@ -5,6 +5,32 @@
 @attribute [Authorize(Roles = "Admin")]
 <h3>AdminMassageTherapy</h3>
 
+<div class="container my-4">
+    <!-- Заголовок + навігація -->
+    <h3 class="mb-3 fw-bold text-primary">Наповнення: сторінки массажна терапія</h3>
+
+    <nav aria-label="breadcrumb" class="bg-white shadow-sm rounded px-3 py-2 mb-4">
+        <ol class="breadcrumb mb-0">
+            @*  <li class="breadcrumb-item"><a href="/admin-home" class="text-decoration-none">Адмін</a></li> *@
+            <li class="breadcrumb-item active" aria-current="page">Масаж</li>
+        </ol>
+    </nav>
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+        <h4 class="fw-semibold mb-0">Титулка сторінки косметологія</h4>
+
+        <div class="d-flex align-items-center gap-2">
+
+            <NavLink class="btn btn-success shadow-sm d-flex align-items-center justify-content-center"
+                     style="min-height: 44px; min-width: 44px;"
+                     href="/edit-message-therapy">
+
+                <i class="bi bi-plus-lg"></i>
+                <span class="d-none d-sm-inline ms-1">Додати титулку</span>
+            </NavLink>
+        </div>
+    </div>
+</div>
+
 @code {
 
 }
