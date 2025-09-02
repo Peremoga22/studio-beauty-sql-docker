@@ -78,7 +78,8 @@
         </div>
 
         <div class="card-footer d-flex flex-column flex-sm-row justify-content-end gap-2">
-                 @if (cosmetologyTherapyCard.Id > 0)
+            <p style="color:red">@ErrorMessage</p>
+            @if (cosmetologyTherapyCard.Id > 0)
                  {
                         <button type="button"
                                 class="btn btn-outline-danger btn-sm px-3 w-100 w-sm-auto order-2 order-sm-1"
@@ -113,6 +114,7 @@
 
     private const long MaxSize = 5 * 1024 * 1024;
     private const string UploadsSubfolder = "uploads/cosmetology";
+    private string ErrorMessage = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -169,11 +171,29 @@
     }
 
     protected async Task DeleteAsync(int cardId)
-    {
-        await _cosmetologyService.DeleteAsync(cardId);
-        _navigationManager.NavigateTo("/edit-cosmetology");
-        this.StateHasChanged();
-    }
+    {       
+        try
+        {
+            if (!string.IsNullOrEmpty(cosmetologyTherapyCard.ImageUrl))
+            {
+                var webRoot = Env.WebRootPath ?? throw new InvalidOperationException("WebRootPath недоступний.");
+                var relative = cosmetologyTherapyCard.ImageUrl.TrimStart('/').Replace('/', Path.DirectorySeparatorChar);
+                var physicalPath = Path.Combine(webRoot, relative);               
 
-   
+                if (System.IO.File.Exists(physicalPath))
+                {
+                    System.IO.File.Delete(physicalPath);                    
+                }
+
+                await _cosmetologyService.DeleteAsync(cardId);
+                _navigationManager.NavigateTo("/edit-cosmetology");
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Помилка при видаленні: {ex.Message}";
+        }
+
+        this.StateHasChanged();
+    }       
 }
