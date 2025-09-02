@@ -1,0 +1,21 @@
+﻿@page "/edit-message-therapy"
+@page "/edit-message-therapy/{Id:int}"
+
+@using System.Globalization
+@inject IWebHostEnvironment Env
+@using Microsoft.AspNetCore.Components.Forms
+@inject NavigationManager _navigationManager
+@inject IJSRuntime _jSRuntime
+@layout AdminLayout
+@attribute [Authorize(Roles = "Admin")]
+@rendermode InteractiveServer
+
+
+<h3>EditMessageCard</h3>
+
+
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+}
