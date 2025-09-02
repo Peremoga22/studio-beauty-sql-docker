@@ -11,6 +11,7 @@ namespace webStudio.Data
         public DbSet<Category> Categories => Set<Category>();
         public DbSet<CosmetologyTherapy> CosmetologyTherapies => Set<CosmetologyTherapy>();
         public DbSet<MessageTherapy> MessageTherapies => Set<MessageTherapy>();
-        public DbSet<CosmetologyTherapyCard> CosmetologyTherapyCards => Set<CosmetologyTherapyCard>();
+        public DbSet<CosmetologyTherapyCard> CosmetologyTherapyCards => Set<CosmetologyTherapyCard>();        
+        public DbSet<MessageTherapyCard> MessageTherapyCards => Set<MessageTherapyCard>();
     }
 }
