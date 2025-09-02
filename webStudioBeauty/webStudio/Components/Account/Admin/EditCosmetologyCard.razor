@@ -78,6 +78,15 @@
         </div>
 
         <div class="card-footer d-flex flex-column flex-sm-row justify-content-end gap-2">
+                 @if (cosmetologyTherapyCard.Id > 0)
+                 {
+                        <button type="button"
+                                class="btn btn-outline-danger btn-sm px-3 w-100 w-sm-auto order-2 order-sm-1"
+                                @onclick="(() => DeleteAsync(Id))">
+                            <i class="bi bi-trash me-1"></i>
+                            <span class="d-none d-sm-inline">Видалити</span>
+                        </button>
+                 }       
             <button type="submit" class="btn btn-primary btn-sm px-3 w-100 w-sm-auto">
                 <i class="bi bi-save me-1"></i>
                 <span class="d-none d-sm-inline">Зберегти</span>
@@ -98,7 +107,7 @@
     [Parameter]
     public int Id { get; set; }
     private CosmetologyTherapyCard cosmetologyTherapyCard = new();
-   
+
     private IBrowserFile? uploadedFile;
     private const long maxSize = 5 * 1024 * 1024;
 
@@ -111,7 +120,7 @@
         {
             cosmetologyTherapyCard = await _cosmetologyService.EditCosmetologyTherapyCard(Id);
         }
-      
+
         this.StateHasChanged();
     }
 
@@ -152,14 +161,19 @@
             }
 
             cosmetologyTherapyCard.ImageUrl = "/" + Path.Combine(UploadsSubfolder, fileName).Replace("\\", "/");
-            cosmetologyTherapyCard.PathFolderImageUrl = physicalFolder;
+            cosmetologyTherapyCard.PathFolderImageUrl = "";
         }
 
         _cosmetologyService.SaveCosmetologyTherapyCard(cosmetologyTherapyCard);
         _navigationManager.NavigateTo("/edit-cosmetology");
     }
 
-   
+    protected async Task DeleteAsync(int cardId)
+    {
+        await _cosmetologyService.DeleteAsync(cardId);
+        _navigationManager.NavigateTo("/edit-cosmetology");
+        this.StateHasChanged();
+    }
 
    
 }

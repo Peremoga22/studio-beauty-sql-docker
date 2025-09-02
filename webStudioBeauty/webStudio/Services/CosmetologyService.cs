@@ -80,5 +80,17 @@ namespace webStudio.Services
             var result = _applicationDbContext.CosmetologyTherapyCards.FirstOrDefault(e => e.Id == cosmetologyId);
             return await Task.FromResult(result);
         }
+
+        public async Task DeleteAsync(int cardId)
+        {
+            var result = await _applicationDbContext.CosmetologyTherapyCards.SingleOrDefaultAsync(e => e.Id == cardId);
+            if (result == null)
+            {
+                return;
+            }
+
+            _applicationDbContext.CosmetologyTherapyCards.Remove(result);
+            await _applicationDbContext.SaveChangesAsync();
+        }
     }
 }
