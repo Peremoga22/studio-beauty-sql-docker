@@ -22,6 +22,7 @@ builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 builder.Services.AddTransient<CategoryService>();
 builder.Services.AddTransient<CosmetologyService>();
+builder.Services.AddTransient<MassageService>();
 
 builder.Services.AddAuthentication(options =>
     {
