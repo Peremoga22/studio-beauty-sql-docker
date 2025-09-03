@@ -244,7 +244,7 @@ namespace webStudio.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AppointmentUsers");
+                    b.ToTable("AppointmentUsers", (string)null);
                 });
 
             modelBuilder.Entity("webStudio.Models.Category", b =>
@@ -270,7 +270,7 @@ namespace webStudio.Migrations
 
                     b.HasIndex("AppointmentUserId");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("webStudio.Models.CosmetologyTherapy", b =>
@@ -296,7 +296,7 @@ namespace webStudio.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("CosmetologyTherapies");
+                    b.ToTable("CosmetologyTherapies", (string)null);
                 });
 
             modelBuilder.Entity("webStudio.Models.CosmetologyTherapyCard", b =>
@@ -328,7 +328,7 @@ namespace webStudio.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CosmetologyTherapyCards");
+                    b.ToTable("CosmetologyTherapyCards", (string)null);
                 });
 
             modelBuilder.Entity("webStudio.Models.MessageTherapy", b =>
@@ -354,7 +354,7 @@ namespace webStudio.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("MessageTherapies");
+                    b.ToTable("MessageTherapies", (string)null);
                 });
 
             modelBuilder.Entity("webStudio.Models.MessageTherapyCard", b =>
@@ -382,7 +382,7 @@ namespace webStudio.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("MessageTherapyCards");
+                    b.ToTable("MessageTherapyCards", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
