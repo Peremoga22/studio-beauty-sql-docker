@@ -38,6 +38,28 @@ namespace webStudio.Services
             _applicationDbContext.SaveChanges();
         }
 
+        public void SaveMassageTherapyCard(MassageTherapyCard massageCard)
+        {
+            if (massageCard.Id == 0)
+            {
+                var result = _applicationDbContext.MassageTherapyCards.Add(massageCard);
+                if (result.State == EntityState.Added)
+                {
+                    _applicationDbContext.SaveChanges();
+                }
+            }
+            else
+            {
+                var categoryInDbEntuty = _applicationDbContext.MassageTherapyCards.Find(massageCard.Id);
+                if (categoryInDbEntuty != null)
+                {
+                    _applicationDbContext.MassageTherapyCards.Update(massageCard);
+                    _applicationDbContext.SaveChanges();
+                }
+            }
+            _applicationDbContext.SaveChanges();
+        }
+
         public async Task<List<Models.MassageTherapy>> GetAllMassageTherapyListAsync()
         {
             var result = await _applicationDbContext.MassageTherapies.ToListAsync();
@@ -54,6 +76,12 @@ namespace webStudio.Services
         {
             var result = await _applicationDbContext.MassageTherapyCards.ToListAsync();
             return result;
+        }
+
+        public async Task<MassageTherapyCard?> EditMassageTherapyCard(int massageId)
+        {
+            return await _applicationDbContext.MassageTherapyCards.FirstOrDefaultAsync(e => e.Id == massageId);                    
+            
         }
     }
 }
