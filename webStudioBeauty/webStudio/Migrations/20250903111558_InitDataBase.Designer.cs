@@ -12,8 +12,8 @@ using webStudio.Data;
 namespace webStudio.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250901170414_FixedModelDeleteFildCaregoryIdForCosmetologyCard")]
-    partial class FixedModelDeleteFildCaregoryIdForCosmetologyCard
+    [Migration("20250903111558_InitDataBase")]
+    partial class InitDataBase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -334,7 +334,7 @@ namespace webStudio.Migrations
                     b.ToTable("CosmetologyTherapyCards");
                 });
 
-            modelBuilder.Entity("webStudio.Models.MessageTherapy", b =>
+            modelBuilder.Entity("webStudio.Models.MassageTherapy", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -342,16 +342,31 @@ namespace webStudio.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("CategoryId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("CategoryId1")
+                    b.Property<int?>("CategoryId")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TitlePage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("MassageTherapies");
+                });
+
+            modelBuilder.Entity("webStudio.Models.MassageTherapyCard", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("DescriptionCard")
                         .IsRequired()
@@ -368,15 +383,9 @@ namespace webStudio.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("TitlePage")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId1");
-
-                    b.ToTable("MessageTherapies");
+                    b.ToTable("MassageTherapyCards");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -444,15 +453,11 @@ namespace webStudio.Migrations
                         .HasForeignKey("CategoryId");
                 });
 
-            modelBuilder.Entity("webStudio.Models.MessageTherapy", b =>
+            modelBuilder.Entity("webStudio.Models.MassageTherapy", b =>
                 {
-                    b.HasOne("webStudio.Models.Category", "Category")
+                    b.HasOne("webStudio.Models.Category", null)
                         .WithMany("Messages")
-                        .HasForeignKey("CategoryId1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
+                        .HasForeignKey("CategoryId");
                 });
 
             modelBuilder.Entity("webStudio.Models.AppointmentUser", b =>

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace webStudio.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class InitDataBase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -67,6 +67,39 @@ namespace webStudio.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CosmetologyTherapyCards",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TitleCard = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DescriptionCard = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    PathFolderImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CosmetologyTherapyCards", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MassageTherapyCards",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TitleCard = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DescriptionCard = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MassageTherapyCards", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Categories",
                 columns: table => new
                 {
@@ -74,17 +107,16 @@ namespace webStudio.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     NameCategory = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserId1 = table.Column<int>(type: "int", nullable: false)
+                    AppointmentUserId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Categories", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Categories_AppointmentUsers_UserId1",
-                        column: x => x.UserId1,
+                        name: "FK_Categories_AppointmentUsers_AppointmentUserId",
+                        column: x => x.AppointmentUserId,
                         principalTable: "AppointmentUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -201,48 +233,36 @@ namespace webStudio.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     TitlePage = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TitleCard = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DescriptionCard = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    CategoryId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CategoryId1 = table.Column<int>(type: "int", nullable: false)
+                    CategoryId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CosmetologyTherapies", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CosmetologyTherapies_Categories_CategoryId1",
-                        column: x => x.CategoryId1,
+                        name: "FK_CosmetologyTherapies_Categories_CategoryId",
+                        column: x => x.CategoryId,
                         principalTable: "Categories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "MessageTherapies",
+                name: "MassageTherapies",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     TitlePage = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TitleCard = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DescriptionCard = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    CategoryId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CategoryId1 = table.Column<int>(type: "int", nullable: false)
+                    CategoryId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_MessageTherapies", x => x.Id);
+                    table.PrimaryKey("PK_MassageTherapies", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_MessageTherapies_Categories_CategoryId1",
-                        column: x => x.CategoryId1,
+                        name: "FK_MassageTherapies_Categories_CategoryId",
+                        column: x => x.CategoryId,
                         principalTable: "Categories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -285,19 +305,19 @@ namespace webStudio.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Categories_UserId1",
+                name: "IX_Categories_AppointmentUserId",
                 table: "Categories",
-                column: "UserId1");
+                column: "AppointmentUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CosmetologyTherapies_CategoryId1",
+                name: "IX_CosmetologyTherapies_CategoryId",
                 table: "CosmetologyTherapies",
-                column: "CategoryId1");
+                column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MessageTherapies_CategoryId1",
-                table: "MessageTherapies",
-                column: "CategoryId1");
+                name: "IX_MassageTherapies_CategoryId",
+                table: "MassageTherapies",
+                column: "CategoryId");
         }
 
         /// <inheritdoc />
@@ -322,7 +342,13 @@ namespace webStudio.Migrations
                 name: "CosmetologyTherapies");
 
             migrationBuilder.DropTable(
-                name: "MessageTherapies");
+                name: "CosmetologyTherapyCards");
+
+            migrationBuilder.DropTable(
+                name: "MassageTherapies");
+
+            migrationBuilder.DropTable(
+                name: "MassageTherapyCards");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

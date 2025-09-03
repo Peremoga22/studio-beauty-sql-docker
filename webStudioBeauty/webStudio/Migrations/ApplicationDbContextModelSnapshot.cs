@@ -244,7 +244,7 @@ namespace webStudio.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AppointmentUsers", (string)null);
+                    b.ToTable("AppointmentUsers");
                 });
 
             modelBuilder.Entity("webStudio.Models.Category", b =>
@@ -270,7 +270,7 @@ namespace webStudio.Migrations
 
                     b.HasIndex("AppointmentUserId");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("webStudio.Models.CosmetologyTherapy", b =>
@@ -296,7 +296,7 @@ namespace webStudio.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("CosmetologyTherapies", (string)null);
+                    b.ToTable("CosmetologyTherapies");
                 });
 
             modelBuilder.Entity("webStudio.Models.CosmetologyTherapyCard", b =>
@@ -328,10 +328,10 @@ namespace webStudio.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CosmetologyTherapyCards", (string)null);
+                    b.ToTable("CosmetologyTherapyCards");
                 });
 
-            modelBuilder.Entity("webStudio.Models.MessageTherapy", b =>
+            modelBuilder.Entity("webStudio.Models.MassageTherapy", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -354,10 +354,10 @@ namespace webStudio.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("MessageTherapies", (string)null);
+                    b.ToTable("MassageTherapies");
                 });
 
-            modelBuilder.Entity("webStudio.Models.MessageTherapyCard", b =>
+            modelBuilder.Entity("webStudio.Models.MassageTherapyCard", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -382,7 +382,7 @@ namespace webStudio.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("MessageTherapyCards", (string)null);
+                    b.ToTable("MassageTherapyCards");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -450,7 +450,7 @@ namespace webStudio.Migrations
                         .HasForeignKey("CategoryId");
                 });
 
-            modelBuilder.Entity("webStudio.Models.MessageTherapy", b =>
+            modelBuilder.Entity("webStudio.Models.MassageTherapy", b =>
                 {
                     b.HasOne("webStudio.Models.Category", null)
                         .WithMany("Messages")
