@@ -1,9 +1,7 @@
 ﻿@page "/edit-cosmetology"
-@page "/edit-cosmetology/{Id:int}"
 
-@using System.Globalization
+
 @inject IWebHostEnvironment Env
-@using Microsoft.AspNetCore.Components.Forms
 @inject NavigationManager _navigationManager
 @inject CosmetologyService _cosmetologyService
 @inject IJSRuntime _jSRuntime
@@ -22,7 +20,7 @@
                 </a>
             </li>
             <li class="breadcrumb-item active" aria-current="page">
-                @(Id == 0 ? "Додати категорію" : "Редагувати категорію")
+                @AddMessageTherapy
             </li>
         </ol>
     </nav>          
@@ -40,7 +38,7 @@
 
                 <div class="card-body">
                     <h5 class="card-title text-center mb-3">
-                        @(Id == 0 ? "Назва титулки сторінки" : "Редагувати титулку сторінки")
+                        Назва титулки сторінки"
                     </h5>
 
                     <div class="mb-3">
@@ -131,25 +129,13 @@
     </section>
 </div>
 
-@code {
-    [Parameter] 
-    public int Id { get; set; }
-    private CosmetologyTherapy modelTitle = new();
-    private CosmetologyTherapyCard cosmetologyTherapyCard = new();
-    private List<CosmetologyTherapy> cosmetologies = new();
+@code { 
+    private string AddMessageTherapy = "Додати категорію";
+    private CosmetologyTherapy modelTitle = new();  
     private List<CosmetologyTherapyCard> cosmetologyTherapyCards = new();
-    private IBrowserFile? uploadedFile;   
-
-    private const long MaxSize = 5 * 1024 * 1024;
-    private const string UploadsSubfolder = "uploads/cosmetology";
 
     protected override async Task OnInitializedAsync()
-    {
-        if (Id != 0)
-        {
-           
-        }
-
+    {       
         modelTitle = await _cosmetologyService.EditCosmetologyTherapyFirstOrDefaultAsync() ?? new CosmetologyTherapy();
         cosmetologyTherapyCards = await _cosmetologyService.GetAllCosmetologyTherapyCardListAsync();
         this.StateHasChanged();
