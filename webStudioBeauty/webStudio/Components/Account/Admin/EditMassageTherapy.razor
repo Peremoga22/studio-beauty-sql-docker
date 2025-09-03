@@ -73,7 +73,7 @@
     </div>
     <header class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
         <NavLink class="btn btn-success btn-sm px-3 d-flex align-items-center"
-                 href="/edit-message-therapy-card">
+                 href="/edit-massage-therapy-card">
             <i class="bi bi-collection me-1"></i><span class="d-none d-sm-inline">Додати картку</span>
         </NavLink>
     </header>
@@ -82,38 +82,42 @@
     <section>
         <h5 class="section-title mb-2">Картки послуг</h5>
         <figure class="figure m-0">
-            <div class="row g-2">
+            <div class="row g-3">
                 @foreach (var item in messageTherapyCards)
                 {
-                    <div class="col-6 col-lg-3">
-                        <div class="card shadow-sm border-0 rounded-3 product-card h-100">
-                            <div class="ratio ratio-1x1">
-                                <img src="@item.ImageUrl"
-                                     alt="@item.TitleCard"
-                                     class="card-img-top object-fit-cover"
-                                     loading="lazy">
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                        <div class="card service-card h-100">
+                            <!-- Відео / прев’ю -->
+                            <div class="ratio ratio-16x9">
+                                <!-- Якщо item.ImageUrl містить YouTube videoId -->
+                                <lite-youtube class="w-100 h-100"
+                                              videoid="@item.ImageUrl"
+                                              title="@item.TitleCard">
+                                </lite-youtube>
                             </div>
-                            <div class="card-body d-flex flex-column p-2">
-                                <h6 class="card-title mb-1 text-dark fw-semibold text-truncate"
-                                    title="@item.TitleCard">
+
+                            <div class="card-body d-flex flex-column p-3">
+                                <h6 class="card-title mb-1 text-truncate" title="@item.TitleCard">
                                     @item.TitleCard
                                 </h6>
-                                <p class="card-text text-muted mb-2 small line-clamp-2"
+
+                                <p class="card-text text-muted small mb-3 line-clamp-2"
                                    title="@item.DescriptionCard">
                                     @item.DescriptionCard
                                 </p>
-                                <div class="mt-auto d-flex flex-column flex-sm-row justify-content-end gap-2">
+
+                                <div class="mt-auto d-flex flex-column flex-sm-row justify-content-between align-items-stretch gap-2">
                                     <button @onclick="(() => EditAdmin(item.Id))"
-                                            class="btn btn-outline-primary w-100 w-sm-auto">
-                                        <i class="bi bi-pencil-square me-1"></i> Редагувати
+                                            class="btn btn-outline-primary btn-sm flex-grow-1">
+                                        <i class="bi bi-pencil-square me-1"></i>
+                                        <span class="d-none d-sm-inline">Редагувати</span>
                                     </button>
 
-                                    <button class="btn btn-dark w-100 w-sm-auto">
+                                    <span class="price-chip text-nowrap">
+                                        <i class="bi bi-cash-stack me-1"></i>
                                         @item.Price.ToString("C0", new System.Globalization.CultureInfo("uk-UA"))
-                                    </button>
+                                    </span>
                                 </div>
-
-
                             </div>
                         </div>
                     </div>
@@ -121,6 +125,7 @@
             </div>
         </figure>
     </section>
+
 </div>
 
 @code {
@@ -152,6 +157,6 @@
 
     protected void EditAdmin(int id)
     {
-        
+        _navigationManager.NavigateTo($"/edit-massage-therapy-card/{id}");
     }
 }

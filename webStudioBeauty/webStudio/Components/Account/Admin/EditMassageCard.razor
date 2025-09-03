@@ -5,7 +5,7 @@
 @inject IWebHostEnvironment Env
 @using Microsoft.AspNetCore.Components.Forms
 @inject NavigationManager _navigationManager
-@inject MassageService _messageService
+@inject MassageService _massageService
 @inject IJSRuntime _jSRuntime
 @layout AdminLayout
 @attribute [Authorize(Roles = "Admin")]
@@ -13,7 +13,7 @@
 
 <h3 style="padding-top: 7%;"></h3>
 <div class="col-12 col-lg-6">
-    <EditForm Model="@messageTherapyCard"
+    <EditForm Model="@massageTherapyCard"
               OnValidSubmit="SaveAsync"
               class="card form-card">
 
@@ -22,7 +22,7 @@
 
         <div class="card-body">
             <h5 class="card-title text-center mb-3">
-                @(messageTherapyCard.Id == 0 ? "Додати нову картку" : "Редагувати картку")
+                @(massageTherapyCard.Id == 0 ? "Додати нову картку" : "Редагувати картку")
             </h5>
 
             <div class="mb-3">
@@ -30,10 +30,10 @@
                     Назва картки <span class="text-danger">*</span>
                 </label>
                 <InputText id="TitleCard"
-                           @bind-Value="messageTherapyCard.TitleCard"
+                           @bind-Value="massageTherapyCard.TitleCard"
                            class="form-control form-control-sm"
                            placeholder="Введіть назву..." />
-                <ValidationMessage For="@(() => messageTherapyCard.TitleCard)" class="text-danger small" />
+                <ValidationMessage For="@(() => massageTherapyCard.TitleCard)" class="text-danger small" />
             </div>
 
             <div class="mb-3">
@@ -41,10 +41,10 @@
                     Опис картки <span class="text-danger">*</span>
                 </label>
                 <InputText id="DescriptionCard"
-                           @bind-Value="messageTherapyCard.DescriptionCard"
+                           @bind-Value="massageTherapyCard.DescriptionCard"
                            class="form-control form-control-sm"
                            placeholder="Короткий опис..." />
-                <ValidationMessage For="@(() => messageTherapyCard.DescriptionCard)" class="text-danger small" />
+                <ValidationMessage For="@(() => massageTherapyCard.DescriptionCard)" class="text-danger small" />
             </div>
 
             <div class="mb-3">
@@ -54,32 +54,32 @@
                 <div class="input-group input-group-sm">
                     <span class="input-group-text">₴</span>
                     <InputNumber id="Price"
-                                 @bind-Value="messageTherapyCard.Price"
+                                 @bind-Value="massageTherapyCard.Price"
                                  class="form-control"
                                  placeholder="0" />
                 </div>
                 <small class="text-muted">Вкажіть вартість у гривнях.</small>
-                <ValidationMessage For="@(() => messageTherapyCard.Price)" class="text-danger small" />
+                <ValidationMessage For="@(() => massageTherapyCard.Price)" class="text-danger small" />
             </div>
 
             <div class="mb-0">
-                <label class="form-label form-label-compact">Фото (jpg/jpeg/png)</label>
-                <InputText id="DescriptionCard"
-                           @bind-Value="messageTherapyCard.DescriptionCard"
+                <label class="form-label form-label-compact">Додайте силку на відео</label>
+                <InputText id="ImageUrl"
+                           @bind-Value="massageTherapyCard.ImageUrl"
                            class="form-control form-control-sm"
                            placeholder="Вставте: url video" />
 
-                @if (!string.IsNullOrEmpty(messageTherapyCard.ImageUrl))
+                @if (!string.IsNullOrEmpty(massageTherapyCard.ImageUrl))
                 {                   
                     <div class="ratio ratio-16x9">
-                        <lite-youtube videoid="@messageTherapyCard.ImageUrl" style="width: 100%; height: auto;" title="Комплексний масаж спини"></lite-youtube>
+                        <lite-youtube videoid="@massageTherapyCard.ImageUrl" style="width: 100%; height: auto;" title="Комплексний масаж спини"></lite-youtube>
                     </div>
                 }
             </div>
         </div>
 
         <div class="card-footer d-flex flex-column flex-sm-row justify-content-end gap-2">         
-            @if (messageTherapyCard.Id > 0)
+            @if (massageTherapyCard.Id > 0)
             {
                 <button type="button"
                         class="btn btn-outline-danger btn-sm px-3 w-100 w-sm-auto order-2 order-sm-1"
@@ -98,8 +98,8 @@
                 <i class="bi bi-x-circle me-1"></i>
                 <span class="d-none d-sm-inline">Скасувати</span>
             </NavLink>
-        </div>
 
+        </div>                        
     </EditForm>
 </div>
 
@@ -108,19 +108,30 @@
 @code {
     [Parameter]
     public int Id { get; set; }
-    private MassageTherapyCard messageTherapyCard = new();
-
+    private MassageTherapyCard massageTherapyCard = new();
+    private string ErrorTiteleOrDescription = string.Empty;
 
 
     protected override async Task OnInitializedAsync()
     {
+        if (Id != 0)
+        {
+            massageTherapyCard = await _massageService.EditMassageTherapyCard(Id);
+        }
 
         this.StateHasChanged();
     }
 
     private async Task SaveAsync()
     {
+        if (string.IsNullOrWhiteSpace(massageTherapyCard.TitleCard) && string.IsNullOrWhiteSpace(massageTherapyCard.DescriptionCard))
+        {
+            ErrorTiteleOrDescription = "Поле не може бути порожнім";
+            return;
+        }
 
+        _massageService.SaveMassageTherapyCard(massageTherapyCard);
+        _navigationManager.NavigateTo("/admin-massage-therapy");
     }
 
     protected async Task DeleteAsync(int cardId)
