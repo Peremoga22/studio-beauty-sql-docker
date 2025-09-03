@@ -47,6 +47,15 @@ namespace webStudio.Services
                     _applicationDbContext.SaveChanges();
                 }
             }
+            else
+            {
+                var categoryInDbEntuty = _applicationDbContext.AppointmentUsers.Find(appointmentUser.Id);
+                if (categoryInDbEntuty != null)
+                {
+                    _applicationDbContext.AppointmentUsers.Update(appointmentUser);
+                    _applicationDbContext.SaveChanges();
+                }
+            }
 
             return appointmentUser.Id;
         }

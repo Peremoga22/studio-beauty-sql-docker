@@ -1,5 +1,6 @@
 ﻿@page "/appointment-confirm"
 @page "/appointment-confirm/{Id:int}"
+
 @inject CategoryService _categoryService
 @inject AppointmentUserService _appointmentUserService
 @inject CosmetologyService _cosmetologyService
@@ -15,44 +16,52 @@
         </div>
         <h1 class="display-5 mb-3">Перевірте деталі запису</h1>
         <p>Якщо все вірно — натисніть «Підтвердити».</p>
-    </div>
+    </div>      
 
     <div class="row justify-content-center">
         <div class="col-lg-6">
             <div class="card shadow rounded">
                 <div class="card-body p-4">
-                    <dl class="row mb-0">
-                        <dt class="col-5">Ім’я:</dt>
-                        <dd class="col-7"><span class="js-name">@appointmentUser.FullName</span></dd>
+                     <EditForm Model="@appointmentUser" method="post" OnSubmit="HandleValidSubmit"
+                              FormName="AppointmentUser"
+                              class="card shadow-sm border rounded-3 p-4 bg-white"
+                              style="width: 100%; max-width: 600px;">
 
-                        <dt class="col-5">Телефон:</dt>
-                        <dd class="col-7"><span class="js-phone">@appointmentUser.Phone</span></dd>
+                        <DataAnnotationsValidator />
+                        <dl class="row mb-0">
+                            <dt class="col-5">Ім’я:</dt>
+                            <dd class="col-7"><span class="js-name">@appointmentUser.FullName</span></dd>
 
-                        <dt class="col-5">Послуга:</dt>
-                        <dd class="col-7"><span class="js-service">Масаж обличчя</span></dd>
+                            <dt class="col-5">Телефон:</dt>
+                            <dd class="col-7"><span class="js-phone">@appointmentUser.Phone</span></dd>
 
-                        <dt class="col-5">Дата:</dt>
-                        <dd class="col-7"><span class="js-date">@appointmentUser.Date</span></dd>
+                            <dt class="col-5">Послуга:</dt>
+                            <dd class="col-7"><span class="js-service">Масаж обличчя</span></dd>
 
-                        <dt class="col-5">Час:</dt>
-                        <dd class="col-7"><span class="js-time">@appointmentUser.SetHour</span></dd>
+                            <dt class="col-5">Дата:</dt>
+                            <dd class="col-7"><span class="js-date">@appointmentUser.Date</span></dd>
 
-                        <dt class="col-5">Оплата:</dt>
-                        <dd class="col-7"><span class="js-date">700 грн</span></dd>
-                    </dl>
+                            <dt class="col-5">Час:</dt>
+                            <dd class="col-7"><span class="js-time">@appointmentUser.SetHour</span></dd>
 
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-between mt-4">
-                        <a href="/appointment" class="btn btn-outline-primary rounded-pill w-100 w-md-auto">
-                            Редагувати
-                        </a>
+                            <dt class="col-5">Оплата:</dt>
+                            <dd class="col-7"><span class="js-date">700 грн</span></dd>
+                        </dl>
 
-                        <a href="/appointment-success"
-                           class="btn rounded-pill px-4 w-100 w-md-auto"
-                           style="background-color:#f8b7d8; color:white; border:none;">
-                            Підтвердити запис
-                        </a>
-                    </div>
-                                       
+                        <div class="d-flex flex-column flex-md-row gap-3 mt-4">
+                            <!-- Кнопка Редагувати -->
+                            <a href="/appointment/@Id"
+                               class="btn btn-outline-primary rounded-pill shadow-sm flex-fill flex-md-grow-0 text-center">
+                                Редагувати
+                            </a>
+
+                            <!-- Кнопка Підтвердити -->
+                            <button type="submit"
+                                    class="btn confirm-btn rounded-pill px-4 flex-fill flex-md-grow-0" style="background-color: #f8b7d8; color: white; border: none;">
+                                Підтвердити запис
+                            </button>
+                        </div>
+                      </EditForm>
                 </div>
             </div>
         </div>
@@ -67,5 +76,12 @@
     protected override async Task OnInitializedAsync()
     {
         appointmentUser = await _appointmentUserService.GetClientAppointment(Id);
+    }
+
+    private void HandleValidSubmit()
+    {
+         appointmentUser.IsConfirmed = true;
+         var idClient = _appointmentUserService.SaveClient(appointmentUser);
+        _navigationManager.NavigateTo($"/appointment-success/{idClient}");
     }
 }

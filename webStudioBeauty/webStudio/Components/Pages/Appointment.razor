@@ -1,4 +1,5 @@
 ﻿@page "/appointment"
+@page "/appointment/{Id:int}"
 @using System.ComponentModel.DataAnnotations;
 @inject CategoryService _categoryService
 @inject AppointmentUserService _appointmentUserService
@@ -122,6 +123,8 @@
 </div>
 
 @code{
+    [Parameter]
+    public int Id { get; set; }
     private AppointmentUser appointmentUser = new();
     private MassageTherapyBooking booking = new();
     private List<Category> categories = new();
@@ -135,6 +138,16 @@
 
     protected override async Task OnInitializedAsync()
     {
+        if(Id>0)
+        {            
+            appointmentUser = await _appointmentUserService.GetClientAppointment(Id);
+            booking.SelectedTime = ConvertToMassageTime(appointmentUser.SetHour);
+        }
+        else
+        {
+            appointmentUser = new();
+        }
+
         appointmentUser.Date = DateOnly.FromDateTime(DateTime.Now);
         categories = await _categoryService.GetAllCategoryListAsync();
         cosmetologyTherapyCard = await _cosmetologyService.GetAllCosmetologyTherapyCardListAsync();
@@ -185,7 +198,7 @@
             MassageTime.Evening_17_30 => new TimeOnly(17, 30),
             _ => throw new ArgumentOutOfRangeException()
         };
-
+               
         var idClient = _appointmentUserService.SaveClient(appointmentUser);
         _navigationManager.NavigateTo($"/appointment-confirm/{idClient}");
     }
@@ -206,20 +219,24 @@
         [Display(Name = "16:00")] Evening_16_00,
         [Display(Name = "17:30")] Evening_17_30
     }
-
-    public void Del()
-    {
-
-    }
-
+       
     public class MassageTherapyBooking
     {
         [Required(ErrorMessage = "Оберіть час")]
         public MassageTime? SelectedTime { get; set; }
-    }
-
-    private void IsValidFild()
+    }    
+    
+    private MassageTime? ConvertToMassageTime(TimeOnly time)
     {
-       
+        return time switch
+        {
+            { Hour: 10, Minute: 0 } => MassageTime.Morning_10_00,
+            { Hour: 11, Minute: 30 } => MassageTime.Morning_11_30,
+            { Hour: 13, Minute: 0 } => MassageTime.Noon_13_00,
+            { Hour: 14, Minute: 30 } => MassageTime.Afternoon_14_30,
+            { Hour: 16, Minute: 0 } => MassageTime.Evening_16_00,
+            { Hour: 17, Minute: 30 } => MassageTime.Evening_17_30,
+            _ => null // Якщо час не підходить під жоден слот
+        };
     }
 }

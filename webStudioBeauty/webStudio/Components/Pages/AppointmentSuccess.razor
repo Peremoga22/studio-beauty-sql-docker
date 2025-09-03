@@ -1,4 +1,9 @@
 ﻿@page "/appointment-success"
+@page "/appointment-success/{Id:int}"
+@inject AppointmentUserService _appointmentUserService
+@inject NavigationManager _navigationManager
+@rendermode InteractiveServer
+
 
 <h3 style="padding-top: 5%;"></h3>
 <div class="container py-5">
@@ -12,7 +17,7 @@
                     </span>
                 </div>
                 <h1 class="display-5 mb-3">Дякуємо! Запис створено</h1>
-                <p class="lead">Ми зв’яжемося з вами для підтвердження деталей найближчим часом.</p>
+                <p class="lead">@appointmentUser.FullName - ми зв’яжемося з вами для підтвердження деталей найближчим часом.</p>
 
                 <div class="d-grid gap-2 d-md-flex justify-content-md-center mt-4">
                     <a href="/" class="btn btn-outline-primary rounded-pill w-100 w-md-auto">
@@ -27,3 +32,14 @@
     </div>
 </div>
 
+@code{
+
+    [Parameter]
+    public int Id { get; set; }
+    private AppointmentUser appointmentUser = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        appointmentUser = await _appointmentUserService.GetClientAppointment(Id);
+    }
+}
