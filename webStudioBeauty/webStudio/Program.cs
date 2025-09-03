@@ -23,6 +23,7 @@ builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuth
 builder.Services.AddTransient<CategoryService>();
 builder.Services.AddTransient<CosmetologyService>();
 builder.Services.AddTransient<MassageService>();
+builder.Services.AddTransient<AppointmentUserService>();
 
 builder.Services.AddAuthentication(options =>
     {

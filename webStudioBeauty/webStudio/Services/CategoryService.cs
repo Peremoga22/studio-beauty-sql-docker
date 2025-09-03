@@ -58,5 +58,6 @@ namespace webStudio.Services
             _applicationDbContext.Categories.Remove(result);
             await _applicationDbContext.SaveChangesAsync();
         }
+               
     }
 }
