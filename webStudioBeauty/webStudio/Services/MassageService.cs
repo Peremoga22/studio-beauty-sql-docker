@@ -83,5 +83,17 @@ namespace webStudio.Services
             return await _applicationDbContext.MassageTherapyCards.FirstOrDefaultAsync(e => e.Id == massageId);                    
             
         }
+
+        public async Task DeleteAsync(int cardId)
+        {
+            var result = await _applicationDbContext.MassageTherapyCards.SingleOrDefaultAsync(e => e.Id == cardId);
+            if (result == null)
+            {
+                return;
+            }
+
+            _applicationDbContext.MassageTherapyCards.Remove(result);
+            await _applicationDbContext.SaveChangesAsync();
+        }
     }
 }

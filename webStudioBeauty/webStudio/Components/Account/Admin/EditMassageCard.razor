@@ -136,6 +136,7 @@
 
     protected async Task DeleteAsync(int cardId)
     {
-        
+        await _massageService.DeleteAsync(cardId);
+        _navigationManager.NavigateTo("/edit-massage-therapy");
     }
 }
