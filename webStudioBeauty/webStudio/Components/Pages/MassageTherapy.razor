@@ -1,5 +1,8 @@
 ﻿@page "/massage-therapy"
 
+@inject MassageService _massageService
+@rendermode InteractiveServer
+
 
 <h3 style="padding-top: 7%;"></h3>
 <section class="text-center pt-32 pb-12 px-4 bg-white">
@@ -21,34 +24,37 @@
 
 <div class="container py-1">
     <div class="row justify-content-center g-4">
-        <div class="col-md-6 col-lg-4">
-            <div class="card h-100 shadow-lg" target="_blank">
-                <div class="ratio ratio-16x9">
-                    <lite-youtube videoid="8AcjZM7DOuk" style="width: 100%; height: auto;" title="Комплексний масаж спини"></lite-youtube>
+        <section>         
+            <figure class="figure m-0">
+                <div class="row g-3">
+                    @foreach (var item in messageTherapyCards)
+                    {
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card h-100 shadow-lg" target="_blank">
+                                <div class="ratio ratio-16x9">
+                                    <lite-youtube videoid="@item.ImageUrl" style="width: 100%; height: auto;" title="@item.ImageUrl"></lite-youtube>
+                                </div>
+                                <div class="card-body text-center">
+                                    <h5 class="card-title" style="color: #f8b7d8;">@item.TitleCard</h5>
+                                    <p class="card-text">@item.DescriptionCard</p>
+                                </div>
+                                <div class="card-footer bg-transparent border-0 text-center">
+                                    <i class="bi bi-cash-stack me-1"></i>
+                                    @item.Price.ToString("C0", new System.Globalization.CultureInfo("uk-UA"))
+                                </div>
+                            </div>
+                        </div>                    
+                    }
                 </div>
-                <div class="card-body text-center">
-                    <h5 class="card-title" style="color: #f8b7d8;">Комплексний масаж спини (40 хв)</h5>
-                    <p class="card-text">Комплексний масаж спини (спина, руки, груди, голова) - полегшить біль в спині, зменшить головні болі.</p>
-                </div>
-                <div class="card-footer bg-transparent border-0 text-center">
-                    <a class="btn btn-outline-primary" href="#">500 грн</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6 col-lg-4">
-            <div class="card h-100 shadow-lg" target="_blank">
-                <div class="ratio ratio-16x9">
-                    <lite-youtube videoid="ikHn4dHpHqA" style="width: 100%; height: auto;" title="Масаж всього тіла "></lite-youtube>
-                </div>
-                <div class="card-body text-center">
-                    <h5 class="card-title" style="color: #f8b7d8;">Масаж всього тіла  (60 хв)</h5>
-                    <p class="card-text">Масаж всього тіла допоможе зняти напругу в мʼязах, покращить кровопостачання, лімфовідтік. Покращить ваш сон і самопочуття.</p>
-                </div>
-                <div class="card-footer bg-transparent border-0 text-center">
-                    <a class="btn btn-outline-primary" href="#">700 грн</a>
-                </div>
-            </div>
-        </div>
+            </figure>
+        </section>       
     </div>
 </div>
 
+@code{
+    private List<MassageTherapyCard> messageTherapyCards = new();
+    protected override async Task OnInitializedAsync() 
+    { 
+        messageTherapyCards = await _massageService.GetAllMassageTherapyCardListAsync(); 
+    }
+}
