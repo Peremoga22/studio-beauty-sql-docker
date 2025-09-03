@@ -2,6 +2,13 @@
 @using Microsoft.AspNetCore.Authorization
 @using webStudio.Components.Layout
 @layout AdminLayout
+@using System.Globalization
+@inject CategoryService _categoryService
+@inject AppointmentUserService _appointmentUserService
+@inject CosmetologyService _cosmetologyService
+@inject MassageService _massageService
+@inject NavigationManager _navigationManager
+@rendermode InteractiveServer
 @attribute [Authorize(Roles = "Admin")]
 
 <h3 style="padding-top: 2%;"></h3>
@@ -16,84 +23,56 @@
                 <h1 class="title">Календар записів</h1>
                 <p class="subtitle">Оберіть день і перегляньте всі записи за послугами</p>
             </div>
-            <div class="controls">
+           @*  <div class="controls">
                 <label class="control">
                     <span class="control__label">Дата</span>
                     <input class="control__input" type="date" value="2025-08-19" />
                 </label>
-            </div>
+            </div> *@
         </header>
 
         <div class="divider"></div>
 
         <section aria-label="Список записів" class="cards">
-            <article class="entry">
-                <div class="entry__row">
-                    <span class="badge badge--massage">Масаж</span>
-                    <span class="time">09:00 – 10:00</span>
-                </div>
-                <div class="client">Іван П.</div>
-                <div class="procedure">Масаж спини</div>
-                <div class="meta">
-                    <span class="duration">Тривалість: 60 хв</span>
-                    <span class="price">600 грн</span>
-                </div>
-            </article>
-
-            <article class="entry">
-                <div class="entry__row">
-                    <span class="badge badge--cosmo">Косметологія</span>
-                    <span class="time">09:30 – 10:30</span>
-                </div>
-                <div class="client">Оксана С.</div>
-                <div class="procedure">Чистка обличчя</div>
-                <div class="meta">
-                    <span class="duration">Тривалість: 60 хв</span>
-                    <span class="price">800 грн</span>
-                </div>
-            </article>
-
-            <article class="entry">
-                <div class="entry__row">
-                    <span class="badge badge--cosmo">Косметологія</span>
-                    <span class="time">11:00 – 12:30</span>
-                </div>
-                <div class="client">Катерина Л.</div>
-                <div class="procedure">Пілінг</div>
-                <div class="meta">
-                    <span class="duration">90 хв</span>
-                    <span class="price">1200 грн</span>
-                </div>
-            </article>
-
-            <article class="entry">
-                <div class="entry__row">
-                    <span class="badge badge--massage">Масаж</span>
-                    <span class="time">13:00 – 14:00</span>
-                </div>
-                <div class="client">Василь С.</div>
-                <div class="procedure">Антистрес масаж</div>
-                <div class="meta">
-                    <span class="duration">60 хв</span>
-                    <span class="price">700 грн</span>
-                </div>
-            </article>
-
-            <article class="entry">
-                <div class="entry__row">
-                    <span class="badge badge--cosmo">Косметологія</span>
-                    <span class="time">15:00 – 15:45</span>
-                </div>
-                <div class="client">Наталія Р.</div>
-                <div class="procedure">Догляд за шкірою</div>
-                <div class="meta">
-                    <span class="duration">45 хв</span>
-                    <span class="price">650 грн</span>
-                </div>
-            </article>
+            @foreach(var item in appointmentUsers)
+            {
+                <article class="entry">
+                    <div class="entry__row">
+                        @foreach (var itemCategory in categories.Where(c => c.Id == item.CategoryId))
+                        {
+                            <span class="badge badge--massage">@itemCategory.NameCategory</span>
+                        }                        
+                        <span class="time">@item.SetHour - @(item.SetHour.AddMinutes(60))</span>                        
+                    </div>
+                    <div class="text-end">
+                        <span>@item.Date.ToString("dd.MM.yyyy")</span>
+                    </div>
+                    <div class="client"><strong>@item.FullName</strong></div>
+                    @foreach (var itemMassage in massageTherapyCards.Where(c => c.Id == item.ServiceId))
+                    {
+                        <div class="procedure">@itemMassage.TitleCard</div>
+                        <div class="meta">
+                            <span class="duration">@itemMassage.Price.ToString("C0", new System.Globalization.CultureInfo("uk-UA"))</span>                           
+                        </div>
+                    }                 
+                   
+                </article>
+            }                  
+                    
         </section>
     </section>
 </main>
-@code {}
+@code {
+    private List<AppointmentUser> appointmentUsers = new();
+    private List<Category> categories = new();
+    private List<MassageTherapyCard> massageTherapyCards = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        appointmentUsers = await _appointmentUserService.GetAllAppointmentUseListAsync();
+        categories = await _categoryService.GetAllCategoryListAsync();
+        massageTherapyCards = await _massageService.GetAllMassageTherapyCardListAsync();
+    }
+}
 
 
