@@ -1,9 +1,8 @@
 ﻿@page "/edit-massage-therapy"
-@* @page "/edit-message-therapyy/{Id:int}" *@
 
-@inject IWebHostEnvironment Env
+@* @inject IWebHostEnvironment Env *@
 @inject NavigationManager _navigationManager
-@inject MassageService _messageService
+@inject MassageService _massageService
 @inject IJSRuntime _jSRuntime
 @layout AdminLayout
 @attribute [Authorize(Roles = "Admin")]
@@ -27,8 +26,7 @@
     <div class="row g-3 mb-4">
         <!-- Форма титулки сторінки -->
         <div class="col-12 col-lg-12">
-            <EditForm Model="@modelTitle"
-                      method="post"
+            <EditForm Model="@modelTitle"                    
                       OnSubmit="HandleValidSubmit"
                       FormName="CosmetologyTherapy"
                       class="card form-card">
@@ -68,7 +66,7 @@
                     <button type="submit" class="btn btn-primary btn-sm px-3">
                         <i class="bi bi-save"></i> <span class="d-none d-sm-inline">Зберегти</span>
                     </button>
-                    <NavLink class="btn btn-outline-secondary btn-sm px-3" href="/admin-massage-therapy">
+                    <NavLink class="btn btn-outline-secondary btn-sm px-3" href="/admin-cosmetology">
                         <i class="bi bi-x-circle"></i> <span class="d-none d-sm-inline">Скасувати</span>
                     </NavLink>
                 </div>
@@ -133,14 +131,17 @@
     private string AddMessageTherapy = "Додати категорію";
     private MassageTherapy modelTitle = new();
     private List<MassageTherapyCard> messageTherapyCards = new();
+
     protected override async Task OnInitializedAsync()
     {
-
+        modelTitle = new MassageTherapy();
+        this.StateHasChanged();
     }
 
-    private async Task HandleValidSubmit()
+    private void HandleValidSubmit()
     {
-
+        _massageService.SaveTitle(modelTitle);
+        _navigationManager.NavigateTo("/admin-massage-therapy");
     }
 
     protected void EditAdmin(int id)

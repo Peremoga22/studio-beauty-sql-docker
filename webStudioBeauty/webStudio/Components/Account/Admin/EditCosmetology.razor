@@ -29,7 +29,7 @@
         <div class="col-12 col-lg-12">
             <EditForm Model="@modelTitle"
                       method="post"
-                      OnSubmit="HandleValidSubmit"
+                      OnSubmit="HandleSubmit"
                       FormName="CosmetologyTherapy"
                       class="card form-card">
 
@@ -141,7 +141,7 @@
         this.StateHasChanged();
     }
 
-    private async Task HandleValidSubmit()
+    private void HandleSubmit()
     {
         _cosmetologyService.SaveTitle(modelTitle);
         _navigationManager.NavigateTo("/admin-cosmetology");
