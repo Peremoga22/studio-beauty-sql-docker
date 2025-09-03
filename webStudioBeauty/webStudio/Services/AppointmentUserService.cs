@@ -66,5 +66,10 @@ namespace webStudio.Services
             return result;
         }
 
+        public async Task<List<AppointmentUser>> GetAllAppointmentUseListAsync()
+        {
+            var result = await _applicationDbContext.AppointmentUsers.ToListAsync();
+            return result;
+        }
     }
 }
