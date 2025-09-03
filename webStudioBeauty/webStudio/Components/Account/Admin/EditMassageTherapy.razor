@@ -133,7 +133,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        modelTitle = new MassageTherapy();
+        modelTitle = await _massageService.EditMassageTherapyFirstOrDefaultAsync();
+        messageTherapyCards = await _massageService.GetAllMassageTherapyCardListAsync();
         this.StateHasChanged();
     }
 

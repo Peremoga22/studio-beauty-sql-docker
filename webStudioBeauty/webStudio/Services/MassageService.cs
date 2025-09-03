@@ -20,7 +20,7 @@ namespace webStudio.Services
         {
             if (model.Id == 0)
             {
-                var result = _applicationDbContext.MessageTherapies.Add(model);
+                var result = _applicationDbContext.MassageTherapies.Add(model);
                 if (result.State == EntityState.Added)
                 {
                     _applicationDbContext.SaveChanges();
@@ -28,10 +28,10 @@ namespace webStudio.Services
             }
             else
             {
-                var categoryInDbEntuty = _applicationDbContext.MessageTherapies.Find(model.Id);
+                var categoryInDbEntuty = _applicationDbContext.MassageTherapies.Find(model.Id);
                 if (categoryInDbEntuty != null)
                 {
-                    _applicationDbContext.MessageTherapies.Update(model);
+                    _applicationDbContext.MassageTherapies.Update(model);
                     _applicationDbContext.SaveChanges();
                 }
             }
@@ -40,9 +40,20 @@ namespace webStudio.Services
 
         public async Task<List<Models.MassageTherapy>> GetAllMassageTherapyListAsync()
         {
-            var result = await _applicationDbContext.MessageTherapies.ToListAsync();
+            var result = await _applicationDbContext.MassageTherapies.ToListAsync();
             return result;
         }
 
+        public async Task<Models.MassageTherapy> EditMassageTherapyFirstOrDefaultAsync()
+        {
+            var result = await _applicationDbContext.MassageTherapies.FirstOrDefaultAsync() ?? new  Models.MassageTherapy();
+            return result;
+        }
+
+        public async Task<List<MassageTherapyCard>> GetAllMassageTherapyCardListAsync()
+        {
+            var result = await _applicationDbContext.MassageTherapyCards.ToListAsync();
+            return result;
+        }
     }
 }
