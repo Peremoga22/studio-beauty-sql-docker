@@ -1,10 +1,11 @@
-﻿@page "/edit-message-therapy-card"
-@page "/edit-message-therapy-card/{Id:int}"
+﻿@page "/edit-massage-therapy-card"
+@page "/edit-massage-therapy-card/{Id:int}"
 
 
 @inject IWebHostEnvironment Env
 @using Microsoft.AspNetCore.Components.Forms
 @inject NavigationManager _navigationManager
+@inject MassageService _messageService
 @inject IJSRuntime _jSRuntime
 @layout AdminLayout
 @attribute [Authorize(Roles = "Admin")]
@@ -93,7 +94,7 @@
             </button>
 
             <NavLink class="btn btn-outline-secondary btn-sm px-3 w-100 w-sm-auto"
-                     href="/edit-cosmetology">
+                     href="/edit-massage-therapy">
                 <i class="bi bi-x-circle me-1"></i>
                 <span class="d-none d-sm-inline">Скасувати</span>
             </NavLink>

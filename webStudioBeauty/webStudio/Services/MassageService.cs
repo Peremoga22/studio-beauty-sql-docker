@@ -6,15 +6,15 @@ using webStudio.Models;
 
 namespace webStudio.Services
 {
-    public class MessageService
+    public class MassageService
     {
         private readonly ApplicationDbContext _applicationDbContext;
-        public MessageService(ApplicationDbContext applicationDbContext)
+        public MassageService(ApplicationDbContext applicationDbContext)
         {
             _applicationDbContext = applicationDbContext;
         }
 
-        public void SaveTitle(MessageTherapy model)
+        public void SaveTitle(Models.MassageTherapy model)
         {
             if (model.Id == 0)
             {

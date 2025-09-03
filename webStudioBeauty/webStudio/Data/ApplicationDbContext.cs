@@ -10,8 +10,8 @@ namespace webStudio.Data
         public DbSet<AppointmentUser> AppointmentUsers => Set<AppointmentUser>();
         public DbSet<Category> Categories => Set<Category>();
         public DbSet<CosmetologyTherapy> CosmetologyTherapies => Set<CosmetologyTherapy>();
-        public DbSet<MessageTherapy> MessageTherapies => Set<MessageTherapy>();
+        public DbSet<MassageTherapy> MessageTherapies => Set<MassageTherapy>();
         public DbSet<CosmetologyTherapyCard> CosmetologyTherapyCards => Set<CosmetologyTherapyCard>();        
-        public DbSet<MessageTherapyCard> MessageTherapyCards => Set<MessageTherapyCard>();
+        public DbSet<MassageTherapyCard> MessageTherapyCards => Set<MassageTherapyCard>();
     }
 }

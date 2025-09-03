@@ -7,7 +7,7 @@ namespace webStudio.Models
         public int Id { get; set; }
         public string NameCategory { get; set; }
         public List<CosmetologyTherapy> Cosmetologies { get; set; } = new List<CosmetologyTherapy>();
-        public List<MessageTherapy> Messages { get; set; } = new List<MessageTherapy>();
+        public List<MassageTherapy> Messages { get; set; } = new List<MassageTherapy>();
         public string UserId { get; set; }
     }
 }

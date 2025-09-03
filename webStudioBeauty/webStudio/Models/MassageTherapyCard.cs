@@ -1,6 +1,6 @@
 ﻿namespace webStudio.Models
 {
-    public class MessageTherapyCard
+    public class MassageTherapyCard
     {
         public int Id { get; set; }
         public string TitleCard { get; set; }
