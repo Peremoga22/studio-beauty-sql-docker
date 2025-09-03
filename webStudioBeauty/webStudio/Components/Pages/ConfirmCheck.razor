@@ -1,4 +1,11 @@
 ﻿@page "/appointment-confirm"
+@page "/appointment-confirm/{Id:int}"
+@inject CategoryService _categoryService
+@inject AppointmentUserService _appointmentUserService
+@inject CosmetologyService _cosmetologyService
+@inject MassageService _massageService
+@inject NavigationManager _navigationManager
+@rendermode InteractiveServer
 
 <h3 style="padding-top: 5%;"></h3>
 <div class="container py-4">
@@ -15,20 +22,23 @@
             <div class="card shadow rounded">
                 <div class="card-body p-4">
                     <dl class="row mb-0">
-                        <dt class="col-5">Ім’я</dt>
-                        <dd class="col-7"><span class="js-name">Олена Максимів</span></dd>
+                        <dt class="col-5">Ім’я:</dt>
+                        <dd class="col-7"><span class="js-name">@appointmentUser.FullName</span></dd>
 
-                        <dt class="col-5">Телефон</dt>
-                        <dd class="col-7"><span class="js-phone">+380930901111</span></dd>
+                        <dt class="col-5">Телефон:</dt>
+                        <dd class="col-7"><span class="js-phone">@appointmentUser.Phone</span></dd>
 
-                        <dt class="col-5">Послуга</dt>
+                        <dt class="col-5">Послуга:</dt>
                         <dd class="col-7"><span class="js-service">Масаж обличчя</span></dd>
 
-                        <dt class="col-5">Дата</dt>
-                        <dd class="col-7"><span class="js-date">12.08.2025</span></dd>
+                        <dt class="col-5">Дата:</dt>
+                        <dd class="col-7"><span class="js-date">@appointmentUser.Date</span></dd>
 
-                        <dt class="col-5">Час</dt>
-                        <dd class="col-7"><span class="js-time">11:30</span></dd>
+                        <dt class="col-5">Час:</dt>
+                        <dd class="col-7"><span class="js-time">@appointmentUser.SetHour</span></dd>
+
+                        <dt class="col-5">Оплата:</dt>
+                        <dd class="col-7"><span class="js-date">700 грн</span></dd>
                     </dl>
 
                     <div class="d-grid gap-2 d-md-flex justify-content-md-between mt-4">
@@ -48,3 +58,14 @@
         </div>
     </div>
 </div>
+
+@code{
+    [Parameter]
+    public int Id { get; set; }
+    private AppointmentUser appointmentUser = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        appointmentUser = await _appointmentUserService.GetClientAppointment(Id);
+    }
+}

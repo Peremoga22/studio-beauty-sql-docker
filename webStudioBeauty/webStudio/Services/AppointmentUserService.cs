@@ -35,9 +35,25 @@ namespace webStudio.Services
             _applicationDbContext.SaveChanges();
         }
 
-        public async Task<List<AppointmentUser>> GetAllCategoryListAsync()
+        public int SaveClient(AppointmentUser appointmentUser)
         {
-            var result = await _applicationDbContext.AppointmentUsers.Include(u => u.Categories).ToListAsync();
+            
+            if (appointmentUser.Id == 0)
+            {
+                var result = _applicationDbContext.AppointmentUsers.Add(appointmentUser);
+                if (result.State == EntityState.Added)
+                {
+                    _applicationDbContext.AppointmentUsers.Add(appointmentUser);
+                    _applicationDbContext.SaveChanges();
+                }
+            }
+
+            return appointmentUser.Id;
+        }
+
+        public async Task<AppointmentUser> GetClientAppointment(int categoryId)
+        {
+            var result = await _applicationDbContext.AppointmentUsers.FirstOrDefaultAsync(c => c.Id == categoryId);
             return result;
         }
 

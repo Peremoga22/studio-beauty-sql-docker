@@ -186,8 +186,8 @@
             _ => throw new ArgumentOutOfRangeException()
         };
 
-        _appointmentUserService.Save(appointmentUser);
-        _navigationManager.NavigateTo("");
+        var idClient = _appointmentUserService.SaveClient(appointmentUser);
+        _navigationManager.NavigateTo($"/appointment-confirm/{idClient}");
     }
 
     private string GetDisplayName(MassageTime time)

@@ -11,6 +11,7 @@ namespace webStudio.Models
         public TimeOnly SetHour { get; set; }
         public int CategoryId { get; set; }
         public int ServiceId { get; set; }
+        public bool IsConfirmed { get; set; } = false;
         public List<Category> Categories { get; set; } = new ();
     }
 }
