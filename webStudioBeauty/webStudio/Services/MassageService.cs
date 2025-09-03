@@ -4,6 +4,8 @@ using webStudio.Components.Pages;
 using webStudio.Data;
 using webStudio.Models;
 
+
+
 namespace webStudio.Services
 {
     public class MassageService
@@ -35,5 +37,12 @@ namespace webStudio.Services
             }
             _applicationDbContext.SaveChanges();
         }
+
+        public async Task<List<Models.MassageTherapy>> GetAllMassageTherapyListAsync()
+        {
+            var result = await _applicationDbContext.MessageTherapies.ToListAsync();
+            return result;
+        }
+
     }
 }

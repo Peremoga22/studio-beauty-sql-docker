@@ -1,4 +1,5 @@
 ﻿@page "/edit-massage-therapy"
+@page "/edit-massage-therapy/{Id:int}"
 
 @* @inject IWebHostEnvironment Env *@
 @inject NavigationManager _navigationManager
@@ -30,10 +31,7 @@
                       OnSubmit="HandleValidSubmit"
                       FormName="CosmetologyTherapy"
                       class="card form-card">
-
-                <DataAnnotationsValidator />
-                <ValidationSummary class="alert alert-danger small" />
-
+                 <DataAnnotationsValidator />              
                 <div class="card-body">
                     <h5 class="card-title text-center mb-3">
                         Назва титулки сторінки"
@@ -41,24 +39,22 @@
 
                     <div class="mb-3">
                         <label for="InputTitlePage" class="form-label form-label-compact">
-                            Назва сторінки <span class="text-danger">*</span>
+                            Назва сторінки <span class="text-danger">*</span><strong style="color:red">@ErrorTiteleOrDescription</strong>
                         </label>
                         <InputText id="InputTitlePage"
                                    @bind-Value="modelTitle.TitlePage"
                                    class="form-control form-control-sm"
-                                   placeholder="Введіть назву..." />
-                        <ValidationMessage For="@(() => modelTitle.TitlePage)" class="text-danger small" />
+                                   placeholder="Введіть назву..." />                       
                     </div>
 
                     <div class="mb-0">
                         <label for="InputDescription" class="form-label form-label-compact">
-                            Опис сторінки <span class="text-danger">*</span>
+                            Опис сторінки <span class="text-danger">*</span><strong style="color:red">@ErrorTiteleOrDescription</strong>
                         </label>
                         <InputText id="InputDescription"
                                    @bind-Value="modelTitle.Description"
                                    class="form-control form-control-sm"
-                                   placeholder="Короткий опис..." />
-                        <ValidationMessage For="@(() => modelTitle.Description)" class="text-danger small" />
+                                   placeholder="Короткий опис..." />                       
                     </div>
                 </div>
 
@@ -66,7 +62,7 @@
                     <button type="submit" class="btn btn-primary btn-sm px-3">
                         <i class="bi bi-save"></i> <span class="d-none d-sm-inline">Зберегти</span>
                     </button>
-                    <NavLink class="btn btn-outline-secondary btn-sm px-3" href="/admin-cosmetology">
+                    <NavLink class="btn btn-outline-secondary btn-sm px-3" href="/admin-massage-therapy">
                         <i class="bi bi-x-circle"></i> <span class="d-none d-sm-inline">Скасувати</span>
                     </NavLink>
                 </div>
@@ -128,9 +124,12 @@
 </div>
 
 @code {
+    [Parameter]
+    public int Id { get; set; }
     private string AddMessageTherapy = "Додати категорію";
     private MassageTherapy modelTitle = new();
     private List<MassageTherapyCard> messageTherapyCards = new();
+    private string ErrorTiteleOrDescription = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -140,6 +139,12 @@
 
     private void HandleValidSubmit()
     {
+        if (string.IsNullOrWhiteSpace(modelTitle.TitlePage) && string.IsNullOrWhiteSpace(modelTitle.Description))
+        {
+            ErrorTiteleOrDescription = "Поле не може бути порожнім";
+            return;
+        }
+
         _massageService.SaveTitle(modelTitle);
         _navigationManager.NavigateTo("/admin-massage-therapy");
     }

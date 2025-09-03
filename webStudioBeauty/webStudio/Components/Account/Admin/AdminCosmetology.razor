@@ -102,8 +102,7 @@
 
 @code {
     private List<CosmetologyTherapy> cosmetologyList = new();
-    private CosmetologyTherapy modelTitle = new();
-
+  
     protected override async Task OnInitializedAsync()
     {
         cosmetologyList = await _cosmetologyService.GetAllCosmetologyTherapy();

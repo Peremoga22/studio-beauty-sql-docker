@@ -1,5 +1,5 @@
 ﻿@page "/edit-cosmetology"
-
+@page "/edit-cosmetology/{Id:int}"
 
 @inject IWebHostEnvironment Env
 @inject NavigationManager _navigationManager
@@ -32,9 +32,7 @@
                       OnSubmit="HandleSubmit"
                       FormName="CosmetologyTherapy"
                       class="card form-card">
-
-                <DataAnnotationsValidator />
-                <ValidationSummary class="alert alert-danger small" />
+                <DataAnnotationsValidator />            
 
                 <div class="card-body">
                     <h5 class="card-title text-center mb-3">
@@ -43,24 +41,21 @@
 
                     <div class="mb-3">
                         <label for="InputTitlePage" class="form-label form-label-compact">
-                            Назва сторінки <span class="text-danger">*</span>
+                            Назва сторінки <span class="text-danger">*</span><strong style="color:red">@ErrorTiteleOrDescription</strong>
                         </label>
                         <InputText id="InputTitlePage"
                                    @bind-Value="modelTitle.TitlePage"
                                    class="form-control form-control-sm"
                                    placeholder="Введіть назву..." />
-                        <ValidationMessage For="@(() => modelTitle.TitlePage)" class="text-danger small" />
-                    </div>
-
+                        </div>
                     <div class="mb-0">
                         <label for="InputDescription" class="form-label form-label-compact">
-                            Опис сторінки <span class="text-danger">*</span>
+                            Опис сторінки <span class="text-danger">*</span><strong style="color:red">@ErrorTiteleOrDescription</strong>
                         </label>
                         <InputText id="InputDescription"
                                    @bind-Value="modelTitle.Description"
                                    class="form-control form-control-sm"
-                                   placeholder="Короткий опис..." />
-                        <ValidationMessage For="@(() => modelTitle.Description)" class="text-danger small" />
+                                   placeholder="Короткий опис..." />                     
                     </div>
                 </div>
 
@@ -130,9 +125,12 @@
 </div>
 
 @code { 
+    [Parameter]
+    public int Id { get; set; }
     private string AddMessageTherapy = "Додати категорію";
     private CosmetologyTherapy modelTitle = new();  
     private List<CosmetologyTherapyCard> cosmetologyTherapyCards = new();
+    private string ErrorTiteleOrDescription = string.Empty;   
 
     protected override async Task OnInitializedAsync()
     {       
@@ -143,6 +141,12 @@
 
     private void HandleSubmit()
     {
+        if (string.IsNullOrWhiteSpace(modelTitle.TitlePage) && string.IsNullOrWhiteSpace(modelTitle.Description))
+        {
+            ErrorTiteleOrDescription = "Поле не може бути порожнім";
+            return;
+        }
+       
         _cosmetologyService.SaveTitle(modelTitle);
         _navigationManager.NavigateTo("/admin-cosmetology");
     }
