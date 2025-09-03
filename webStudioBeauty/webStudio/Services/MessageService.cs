@@ -6,10 +6,10 @@ using webStudio.Models;
 
 namespace webStudio.Services
 {
-    public class MassageService
+    public class MessageService
     {
         private readonly ApplicationDbContext _applicationDbContext;
-        public MassageService(ApplicationDbContext applicationDbContext)
+        public MessageService(ApplicationDbContext applicationDbContext)
         {
             _applicationDbContext = applicationDbContext;
         }
