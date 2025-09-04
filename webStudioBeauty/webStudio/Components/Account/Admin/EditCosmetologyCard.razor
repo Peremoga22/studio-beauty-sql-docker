@@ -145,8 +145,7 @@
                 throw new InvalidOperationException("Файл завеликий (максимум 5 МБ).");
 
             var webRoot = Env.WebRootPath ?? throw new InvalidOperationException("WebRootPath недоступний.");
-
-            // 1) Санітизуємо підкаталог (жодних початкових / або \ )
+                      
             var safeSubfolder = (UploadsSubfolder ?? "uploads")
                 .Trim()
                 .TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
@@ -166,7 +165,7 @@
                 await uploadedFile.OpenReadStream(MaxSize).CopyToAsync(fs);
             }
 
-            // 2) Якщо був старий файл — пробуємо видалити
+            //  Якщо був старий файл — пробуємо видалити
             if (!string.IsNullOrEmpty(cosmetologyTherapyCard.ImageUrl))
             {
                 var oldRel = cosmetologyTherapyCard.ImageUrl.TrimStart('/', '\\')
@@ -180,7 +179,7 @@
                 }
             }
 
-            // 3) Формуємо URL без Path.Combine
+            //  Формуємо URL без Path.Combine
             cosmetologyTherapyCard.ImageUrl = $"/{safeSubfolder.Replace("\\", "/")}/{fileName}";
 
             // Якщо поле не використовується — краще забрати зовсім

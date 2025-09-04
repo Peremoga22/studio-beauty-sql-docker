@@ -28,7 +28,7 @@
         <div class="divider"></div>
 
         <section aria-label="Список записів" class="cards">
-            @foreach (var item in (appointmentUsers ?? Enumerable.Empty<AppointmentUser>()))
+            @foreach (var item in ((appointmentUsers ?? Enumerable.Empty<AppointmentUser>()).Where(a => a.IsConfirmed == true)))
             {
                 var cat = categories?.FirstOrDefault(c => c.Id == item.CategoryId);
                 var ua = new System.Globalization.CultureInfo("uk-UA");
@@ -47,7 +47,7 @@
                         }
                         <span class="time">
                             @($"{item.SetHour:HH\\:mm} – {item.SetHour.AddMinutes(60):HH\\:mm}")
-                        </span>
+                        </span>                       
                     </div>
 
                     <div class="text-end">
@@ -64,6 +64,16 @@
                             <span class="duration">@service.Value.Price.ToString("C0", ua)</span>
                         </div>
                     }
+                    
+                    <div class="ms-auto text-center">
+                        <button class="btn btn-outline-danger btn-sm rounded-pill d-inline-flex align-items-center gap-1"
+                                title="Видалити запис"
+                                disabled="@deleting.Contains(item.Id)"
+                                @onclick="() => ConfirmAndDeleteAsync(item)">
+                            <i class="fa-solid fa-trash" aria-hidden="true"></i>
+                            <span>@(deleting.Contains(item.Id) ? "Видаляю..." : "Видалити")</span>
+                        </button>
+                    </div>
                 </article>
             }
         </section>
@@ -75,6 +85,7 @@
     private List<Category> categories = new();
     private List<MassageTherapyCard> massageTherapyCards = new();
     private List<CosmetologyTherapyCard> cosmetologyTherapyCards = new();
+    private HashSet<int> deleting = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -82,6 +93,12 @@
         categories = await _categoryService.GetAllCategoryListAsync();
         massageTherapyCards = await _massageService.GetAllMassageTherapyCardListAsync();
         cosmetologyTherapyCards = await _cosmetologyService.GetAllCosmetologyTherapyCardListAsync();
+    }
+
+    private async Task ConfirmAndDeleteAsync(AppointmentUser item)
+    {
+        item.IsConfirmed = false;
+        _appointmentUserService.Save(item);
     }
 }
 

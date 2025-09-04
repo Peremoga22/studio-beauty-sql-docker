@@ -32,6 +32,7 @@ namespace webStudio.Services
                     _applicationDbContext.SaveChanges();
                 }
             }
+
             _applicationDbContext.SaveChanges();
         }
 
