@@ -145,25 +145,46 @@
                 throw new InvalidOperationException("Файл завеликий (максимум 5 МБ).");
 
             var webRoot = Env.WebRootPath ?? throw new InvalidOperationException("WebRootPath недоступний.");
-            var physicalFolder = Path.Combine(webRoot, UploadsSubfolder);
+
+            // 1) Санітизуємо підкаталог (жодних початкових / або \ )
+            var safeSubfolder = (UploadsSubfolder ?? "uploads")
+                .Trim()
+                .TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
+            // Захист від '..' у шляху
+            if (safeSubfolder.Contains(".."))
+                throw new InvalidOperationException("Некоректний підкаталог для завантажень.");
+
+            var physicalFolder = Path.Combine(webRoot, safeSubfolder);
             Directory.CreateDirectory(physicalFolder);
 
             var fileName = $"{Guid.NewGuid():N}{ext}";
             var physicalPath = Path.Combine(physicalFolder, fileName);
 
-            await using (var fs = new FileStream(physicalPath, FileMode.Create, FileAccess.Write, FileShare.Read, 81920, true))
+            await using (var fs = new FileStream(physicalPath, FileMode.Create, FileAccess.Write, FileShare.Read, 81920, useAsync: true))
             {
                 await uploadedFile.OpenReadStream(MaxSize).CopyToAsync(fs);
             }
 
+            // 2) Якщо був старий файл — пробуємо видалити
             if (!string.IsNullOrEmpty(cosmetologyTherapyCard.ImageUrl))
             {
-                var oldPhysical = Path.Combine(webRoot, cosmetologyTherapyCard.ImageUrl.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
-                try { if (File.Exists(oldPhysical)) File.Delete(oldPhysical); } catch { /* лог або відкладити */ }
+                var oldRel = cosmetologyTherapyCard.ImageUrl.TrimStart('/', '\\')
+                    .Replace('/', Path.DirectorySeparatorChar);
+
+                // захист від '..'
+                if (!oldRel.Contains(".."))
+                {
+                    var oldPhysical = Path.Combine(webRoot, oldRel);
+                    try { if (System.IO.File.Exists(oldPhysical)) System.IO.File.Delete(oldPhysical); } catch { /* TODO: лог */ }
+                }
             }
 
-            cosmetologyTherapyCard.ImageUrl = "/" + Path.Combine(UploadsSubfolder, fileName).Replace("\\", "/");
-            cosmetologyTherapyCard.PathFolderImageUrl = "";
+            // 3) Формуємо URL без Path.Combine
+            cosmetologyTherapyCard.ImageUrl = $"/{safeSubfolder.Replace("\\", "/")}/{fileName}";
+
+            // Якщо поле не використовується — краще забрати зовсім
+            cosmetologyTherapyCard.PathFolderImageUrl = string.Empty;
         }
 
         _cosmetologyService.SaveCosmetologyTherapyCard(cosmetologyTherapyCard);

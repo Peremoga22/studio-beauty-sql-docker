@@ -22,56 +22,66 @@
             <div>
                 <h1 class="title">Календар записів</h1>
                 <p class="subtitle">Оберіть день і перегляньте всі записи за послугами</p>
-            </div>
-           @*  <div class="controls">
-                <label class="control">
-                    <span class="control__label">Дата</span>
-                    <input class="control__input" type="date" value="2025-08-19" />
-                </label>
-            </div> *@
+            </div>          
         </header>
 
         <div class="divider"></div>
 
         <section aria-label="Список записів" class="cards">
-            @foreach(var item in appointmentUsers)
+            @foreach (var item in (appointmentUsers ?? Enumerable.Empty<AppointmentUser>()))
             {
+                var cat = categories?.FirstOrDefault(c => c.Id == item.CategoryId);
+                var ua = new System.Globalization.CultureInfo("uk-UA");
+                
+                (string TitleCard, decimal Price)? service = massageTherapyCards?.FirstOrDefault(s => s.Id == item.ServiceId) is { } m
+                ? (m.TitleCard, m.Price)
+                : cosmetologyTherapyCards?.FirstOrDefault(s => s.Id == item.ServiceId) is { } c
+                ? (c.TitleCard, c.Price)
+                : null;
+
                 <article class="entry">
                     <div class="entry__row">
-                        @foreach (var itemCategory in categories.Where(c => c.Id == item.CategoryId))
+                        @if (cat is not null)
                         {
-                            <span class="badge badge--massage">@itemCategory.NameCategory</span>
-                        }                        
-                        <span class="time">@item.SetHour - @(item.SetHour.AddMinutes(60))</span>                        
+                            <span class="badge badge--massage">@cat.NameCategory</span>
+                        }
+                        <span class="time">
+                            @($"{item.SetHour:HH\\:mm} – {item.SetHour.AddMinutes(60):HH\\:mm}")
+                        </span>
                     </div>
+
                     <div class="text-end">
                         <span>@item.Date.ToString("dd.MM.yyyy")</span>
                     </div>
+
                     <div class="client"><strong>@item.FullName</strong></div>
-                    @foreach (var itemMassage in massageTherapyCards.Where(c => c.Id == item.ServiceId))
+                    <div class="client"><strong><a href="tel:@item.Phone">@item.Phone</a></strong></div>
+
+                    @if (service is not null)
                     {
-                        <div class="procedure">@itemMassage.TitleCard</div>
+                        <div class="procedure">@service.Value.TitleCard</div>
                         <div class="meta">
-                            <span class="duration">@itemMassage.Price.ToString("C0", new System.Globalization.CultureInfo("uk-UA"))</span>                           
+                            <span class="duration">@service.Value.Price.ToString("C0", ua)</span>
                         </div>
-                    }                 
-                   
+                    }
                 </article>
-            }                  
-                    
+            }
         </section>
+
     </section>
 </main>
 @code {
     private List<AppointmentUser> appointmentUsers = new();
     private List<Category> categories = new();
     private List<MassageTherapyCard> massageTherapyCards = new();
+    private List<CosmetologyTherapyCard> cosmetologyTherapyCards = new();
 
     protected override async Task OnInitializedAsync()
     {
         appointmentUsers = await _appointmentUserService.GetAllAppointmentUseListAsync();
         categories = await _categoryService.GetAllCategoryListAsync();
         massageTherapyCards = await _massageService.GetAllMassageTherapyCardListAsync();
+        cosmetologyTherapyCards = await _cosmetologyService.GetAllCosmetologyTherapyCardListAsync();
     }
 }
 

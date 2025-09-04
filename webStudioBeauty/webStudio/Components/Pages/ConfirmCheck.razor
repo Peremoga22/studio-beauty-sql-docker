@@ -28,25 +28,44 @@
                               style="width: 100%; max-width: 600px;">
 
                         <DataAnnotationsValidator />
-                        <dl class="row mb-0">
-                            <dt class="col-5">Ім’я:</dt>
-                            <dd class="col-7"><span class="js-name">@appointmentUser.FullName</span></dd>
+                        @foreach (var item in appointmentUsers.Where(c => c.Id == Id))
+                        {
+                            <dl class="row mb-0">
+                                <dt class="col-5">Ім’я:</dt>
+                                <dd class="col-7"><span class="js-name">@item.FullName</span></dd>
 
-                            <dt class="col-5">Телефон:</dt>
-                            <dd class="col-7"><span class="js-phone">@appointmentUser.Phone</span></dd>
-                            @*  ToDo: *@
-                            <dt class="col-5">Послуга:</dt>
-                            <dd class="col-7"><span class="js-service">Масаж обличчя</span></dd>
+                                <dt class="col-5">Телефон:</dt>
+                                <dd class="col-7"><span class="js-phone">@item.Phone</span></dd>
+                                @foreach (var itemMassage in massageTherapyCards.Where(c => c.Id == item.ServiceId))
+                                {
+                                    <dt class="col-5">Послуга:</dt>
+                                    <dd class="col-7"><span class="js-service">@itemMassage.TitleCard</span></dd>
+                                }
 
-                            <dt class="col-5">Дата:</dt>
-                            <dd class="col-7"><span class="js-date">@appointmentUser.Date</span></dd>
+                                @foreach (var itemMassage in cosmetologyTherapyCards.Where(c => c.Id == item.ServiceId))
+                                {
+                                    <dt class="col-5">Послуга:</dt>
+                                    <dd class="col-7"><span class="js-service">@itemMassage.TitleCard</span></dd>
+                                }
 
-                            <dt class="col-5">Час:</dt>
-                            <dd class="col-7"><span class="js-time">@appointmentUser.SetHour</span></dd>
-                           @*  ToDo: *@
-                            <dt class="col-5">Оплата:</dt>
-                            <dd class="col-7"><span class="js-date">700 грн</span></dd>
-                        </dl>
+                                <dt class="col-5">Дата:</dt>
+                                <dd class="col-7"><span class="js-date">@item.Date.ToString("dd.MM.yyyy")</span></dd>
+
+                                <dt class="col-5">Час:</dt>
+                                <dd class="col-7"><span class="js-time">@item.SetHour.ToString("HH:mm") - @(item.SetHour.AddMinutes(60))</span></dd>
+                                @foreach (var itemMassagePrice in massageTherapyCards.Where(c => c.Id == item.ServiceId))
+                                {
+                                    <dt class="col-5">Оплата:</dt>
+                                    <dd class="col-7"><span class="js-date">@itemMassagePrice.Price.ToString("C0", new System.Globalization.CultureInfo("uk-UA"))</span></dd>
+                                }
+                                @foreach (var itemMassagePrice in cosmetologyTherapyCards.Where(c => c.Id == item.ServiceId))
+                                {
+                                    <dt class="col-5">Оплата:</dt>
+                                    <dd class="col-7"><span class="js-date">@itemMassagePrice.Price.ToString("C0", new System.Globalization.CultureInfo("uk-UA"))</span></dd>
+                                }
+                            </dl>
+                        }
+                       
 
                         <div class="d-flex flex-column flex-md-row gap-3 mt-4">
                             <!-- Кнопка Редагувати -->
@@ -72,10 +91,19 @@
     [Parameter]
     public int Id { get; set; }
     private AppointmentUser appointmentUser = new();
+    private List<AppointmentUser> appointmentUsers = new();
+    private List<Category> categories = new();
+    private List<MassageTherapyCard> massageTherapyCards = new();
+    private List<CosmetologyTherapyCard> cosmetologyTherapyCards = new();
 
     protected override async Task OnInitializedAsync()
     {
         appointmentUser = await _appointmentUserService.GetClientAppointment(Id);
+
+        appointmentUsers = await _appointmentUserService.GetAllAppointmentUseListAsync();
+        categories = await _categoryService.GetAllCategoryListAsync();
+        massageTherapyCards = await _massageService.GetAllMassageTherapyCardListAsync();
+        cosmetologyTherapyCards = await _cosmetologyService.GetAllCosmetologyTherapyCardListAsync();
     }
 
     private void HandleValidSubmit()
