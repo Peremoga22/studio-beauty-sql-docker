@@ -142,7 +142,7 @@
                 categoryName = categories.FirstOrDefault(c => c.Id == appointmentUser.CategoryId)?.NameCategory;
                 
                 // >>> ВАЖЛИВО: обираємо джерело послуг за категорією <<<
-                int CosmetologyCategoryId = categories.FirstOrDefault(c => c.Id == appointmentUser.CategoryId).Id;
+                const  int CosmetologyCategoryId = 1;
 
                 if (appointmentUser.CategoryId == CosmetologyCategoryId)
                 {
