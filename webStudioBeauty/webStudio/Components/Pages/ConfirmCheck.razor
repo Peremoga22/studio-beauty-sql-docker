@@ -16,99 +16,164 @@
         </div>
         <h1 class="display-5 mb-3">Перевірте деталі запису</h1>
         <p>Якщо все вірно — натисніть «Підтвердити».</p>
-    </div>      
+    </div>
 
     <div class="row justify-content-center">
         <div class="col-lg-6">
             <div class="card shadow rounded">
                 <div class="card-body p-4">
-                     <EditForm Model="@appointmentUser" method="post" OnSubmit="HandleValidSubmit"
-                              FormName="AppointmentUser"
-                              class="card shadow-sm border rounded-3 p-4 bg-white"
-                              style="width: 100%; max-width: 600px;">
 
-                        <DataAnnotationsValidator />
-                        @foreach (var item in appointmentUsers.Where(c => c.Id == Id))
-                        {
+                    @if (isLoading)
+                    {
+                        <div class="text-center py-4">Завантаження…</div>
+                    }
+                    else if (appointmentUser is null)
+                    {
+                        <div class="alert alert-warning">Запис не знайдено.</div>
+                    }
+                    else
+                    {
+                        <EditForm Model="@appointmentUser"
+                                  OnValidSubmit="HandleValidSubmit"
+                                  class="card shadow-sm border rounded-3 p-4 bg-white"
+                                  style="width: 100%; max-width: 600px;">
+                            <DataAnnotationsValidator />
+
                             <dl class="row mb-0">
                                 <dt class="col-5">Ім’я:</dt>
-                                <dd class="col-7"><span class="js-name">@item.FullName</span></dd>
+                                <dd class="col-7"><span class="js-name">@appointmentUser.FullName</span></dd>
 
                                 <dt class="col-5">Телефон:</dt>
-                                <dd class="col-7"><span class="js-phone">@item.Phone</span></dd>
-                                @foreach (var itemMassage in massageTherapyCards.Where(c => c.Id == item.ServiceId))
+                                <dd class="col-7">
+                                    <span class="js-phone">
+                                        @if (ShowPhoneAsLink)
+                                        {
+                                            <a href="tel:@appointmentUser.Phone">@appointmentUser.Phone</a>
+                                        }
+                                        else
+                                        {
+                                            @appointmentUser.Phone
+                                        }
+                                    </span>
+                                </dd>
+
+                                @if (!string.IsNullOrWhiteSpace(categoryName))
                                 {
-                                    <dt class="col-5">Послуга:</dt>
-                                    <dd class="col-7"><span class="js-service">@itemMassage.TitleCard</span></dd>
+                                    <dt class="col-5">Категорія:</dt>
+                                    <dd class="col-7">@categoryName</dd>
                                 }
 
-                                @foreach (var itemMassage in cosmetologyTherapyCards.Where(c => c.Id == item.ServiceId))
+                                @if (!string.IsNullOrWhiteSpace(serviceTitle))
                                 {
                                     <dt class="col-5">Послуга:</dt>
-                                    <dd class="col-7"><span class="js-service">@itemMassage.TitleCard</span></dd>
+                                    <dd class="col-7"><span class="js-service">@serviceTitle</span></dd>
+                                }
+
+                                @if (servicePrice.HasValue)
+                                {
+                                    <dt class="col-5">Оплата:</dt>
+                                    <dd class="col-7">
+                                        <span class="js-price">@servicePrice.Value.ToString("C0", ua)</span>
+                                    </dd>
                                 }
 
                                 <dt class="col-5">Дата:</dt>
-                                <dd class="col-7"><span class="js-date">@item.Date.ToString("dd.MM.yyyy")</span></dd>
+                                <dd class="col-7"><span class="js-date">@FormatDate(appointmentUser.Date)</span></dd>
 
                                 <dt class="col-5">Час:</dt>
-                                <dd class="col-7"><span class="js-time">@item.SetHour.ToString("HH:mm") - @(item.SetHour.AddMinutes(60))</span></dd>
-                                @foreach (var itemMassagePrice in massageTherapyCards.Where(c => c.Id == item.ServiceId))
-                                {
-                                    <dt class="col-5">Оплата:</dt>
-                                    <dd class="col-7"><span class="js-date">@itemMassagePrice.Price.ToString("C0", new System.Globalization.CultureInfo("uk-UA"))</span></dd>
-                                }
-                                @foreach (var itemMassagePrice in cosmetologyTherapyCards.Where(c => c.Id == item.ServiceId))
-                                {
-                                    <dt class="col-5">Оплата:</dt>
-                                    <dd class="col-7"><span class="js-date">@itemMassagePrice.Price.ToString("C0", new System.Globalization.CultureInfo("uk-UA"))</span></dd>
-                                }
+                                <dd class="col-7">
+                                    <span class="js-time">@FormatTimeRange(appointmentUser.SetHour, DurationMinutes)</span>
+                                </dd>
                             </dl>
-                        }                       
 
-                        <div class="d-flex flex-column flex-md-row gap-3 mt-4">
-                            <!-- Кнопка Редагувати -->
-                            <a href="/appointment/@Id"
-                               class="btn btn-outline-primary rounded-pill shadow-sm flex-fill flex-md-grow-0 text-center">
-                                Редагувати
-                            </a>
+                            <div class="d-flex flex-column flex-md-row gap-3 mt-4">
+                                <a href="/appointment/@Id"
+                                   class="btn btn-outline-primary rounded-pill shadow-sm flex-fill flex-md-grow-0 text-center">
+                                    Редагувати
+                                </a>
 
-                            <!-- Кнопка Підтвердити -->
-                            <button type="submit"
-                                    class="btn confirm-btn rounded-pill px-4 flex-fill flex-md-grow-0" style="background-color: #f8b7d8; color: white; border: none;">
-                                Підтвердити запис
-                            </button>
-                        </div>
-                      </EditForm>
+                                <button type="submit"
+                                        class="btn confirm-btn rounded-pill px-4 flex-fill flex-md-grow-0"
+                                        style="background-color: #f8b7d8; color: white; border: none;">
+                                    Підтвердити запис
+                                </button>
+                            </div>
+                        </EditForm>
+                    }
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-@code{
-    [Parameter]
-    public int Id { get; set; }
-    private AppointmentUser appointmentUser = new();
-    private List<AppointmentUser> appointmentUsers = new();
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private AppointmentUser? appointmentUser;
     private List<Category> categories = new();
     private List<MassageTherapyCard> massageTherapyCards = new();
     private List<CosmetologyTherapyCard> cosmetologyTherapyCards = new();
+       
+    [Parameter] public int DurationMinutes { get; set; } = 60;
+    [Parameter] public bool ShowPhoneAsLink { get; set; } = true;
+
+    private readonly CultureInfo ua = new("uk-UA");
+    private bool isLoading = true;
+     
+    private string? categoryName;
+    private string? serviceTitle;
+    private decimal? servicePrice;
+    private string FormatDate(DateTime d) => d.ToString("dd.MM.yyyy", ua);
+    private string FormatDate(DateOnly d) => d.ToString("dd.MM.yyyy", ua);
 
     protected override async Task OnInitializedAsync()
     {
-        appointmentUser = await _appointmentUserService.GetClientAppointment(Id);
+        try
+        {
+            isLoading = true;
 
-        appointmentUsers = await _appointmentUserService.GetAllAppointmentUseListAsync();
-        categories = await _categoryService.GetAllCategoryListAsync();
-        massageTherapyCards = await _massageService.GetAllMassageTherapyCardListAsync();
-        cosmetologyTherapyCards = await _cosmetologyService.GetAllCosmetologyTherapyCardListAsync();
+            appointmentUser = await _appointmentUserService.GetClientAppointment(Id);
+            categories = await _categoryService.GetAllCategoryListAsync();
+            massageTherapyCards = await _massageService.GetAllMassageTherapyCardListAsync();
+            cosmetologyTherapyCards = await _cosmetologyService.GetAllCosmetologyTherapyCardListAsync();
+
+            if (appointmentUser is not null)
+            {
+                categoryName = categories.FirstOrDefault(c => c.Id == appointmentUser.CategoryId)?.NameCategory;
+                
+                // >>> ВАЖЛИВО: обираємо джерело послуг за категорією <<<
+                int CosmetologyCategoryId = categories.FirstOrDefault(c => c.Id == appointmentUser.CategoryId).Id;
+
+                if (appointmentUser.CategoryId == CosmetologyCategoryId)
+                {
+                    var srv = cosmetologyTherapyCards.FirstOrDefault(s => s.Id == appointmentUser.ServiceId);
+                    serviceTitle = srv?.TitleCard;
+                    servicePrice = srv?.Price;
+                }
+                else
+                {
+                    var srv = massageTherapyCards.FirstOrDefault(s => s.Id == appointmentUser.ServiceId);
+                    serviceTitle = srv?.TitleCard;
+                    servicePrice = srv?.Price;
+                }
+            }
+        }
+        finally
+        {
+            isLoading = false;
+        }
     }
 
     private void HandleValidSubmit()
     {
-         appointmentUser.IsConfirmed = true;
-         var idClient = _appointmentUserService.SaveClient(appointmentUser);
+        if (appointmentUser is null) return;
+
+        appointmentUser.IsConfirmed = true;
+                
+        var idClient = _appointmentUserService.SaveClient(appointmentUser);
         _navigationManager.NavigateTo($"/appointment-success/{idClient}");
     }
+
+    private static string FormatTimeRange(TimeOnly start, int durationMinutes)
+        => $"{start:HH\\:mm} – {start.AddMinutes(durationMinutes):HH\\:mm}";
 }
