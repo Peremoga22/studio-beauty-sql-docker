@@ -28,14 +28,15 @@
         <div class="divider"></div>
 
         <section aria-label="Список записів" class="cards">
-            @foreach (var item in ((appointmentUsers ?? Enumerable.Empty<AppointmentUser>()).Where(a => a.IsConfirmed == true)))
+            @foreach (var item in (appointmentUsers ?? Enumerable.Empty<AppointmentUser>()).Where(a => a.IsConfirmed == true))
             {
                 var cat = categories?.FirstOrDefault(c => c.Id == item.CategoryId);
-                var ua = new System.Globalization.CultureInfo("uk-UA");
-                
-                (string TitleCard, decimal Price)? service = massageTherapyCards?.FirstOrDefault(s => s.Id == item.ServiceId) is { } m
+
+                // ✅ Шукаємо завжди по ServiceId, НЕ по CategoryId
+                (string TitleCard, decimal Price)? service =
+                (item.ServiceId is int sid && massageTherapyCards?.FirstOrDefault(s => s.Id == sid) is { } m)
                 ? (m.TitleCard, m.Price)
-                : cosmetologyTherapyCards?.FirstOrDefault(s => s.Id == item.ServiceId) is { } c
+                : (item.ServiceId is int sid2 && cosmetologyTherapyCards?.FirstOrDefault(s => s.Id == sid2) is { } c)
                 ? (c.TitleCard, c.Price)
                 : null;
 
@@ -47,7 +48,7 @@
                         }
                         <span class="time">
                             @($"{item.SetHour:HH\\:mm} – {item.SetHour.AddMinutes(60):HH\\:mm}")
-                        </span>                       
+                        </span>
                     </div>
 
                     <div class="text-end">
@@ -64,7 +65,7 @@
                             <span class="duration">@service.Value.Price.ToString("C0", ua)</span>
                         </div>
                     }
-                    
+
                     <div class="ms-auto text-center">
                         <button class="btn btn-outline-danger btn-sm rounded-pill d-inline-flex align-items-center gap-1"
                                 title="Видалити запис"
@@ -78,6 +79,7 @@
             }
         </section>
 
+
     </section>
 </main>
 @code {
@@ -86,6 +88,7 @@
     private List<MassageTherapyCard> massageTherapyCards = new();
     private List<CosmetologyTherapyCard> cosmetologyTherapyCards = new();
     private HashSet<int> deleting = new();
+    private readonly System.Globalization.CultureInfo ua = new("uk-UA");
 
     protected override async Task OnInitializedAsync()
     {
